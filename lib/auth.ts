@@ -1,3 +1,4 @@
+import 'server-only'
 import { cookies } from 'next/headers'
 import fs from 'fs'
 import path from 'path'
