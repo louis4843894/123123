@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { BookOpen, ChevronRight, Clock } from 'lucide-react'
 import { Navbar } from '@/components/navbar'
 import { Footer } from '@/components/footer'
+import { getSettings } from '@/lib/db'
 
 const ARTICLES = [
   {
@@ -91,7 +92,8 @@ const FAQ = [
   },
 ]
 
-export default function KnowledgePage() {
+export default async function KnowledgePage() {
+  const settings = getSettings()
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
@@ -164,7 +166,7 @@ export default function KnowledgePage() {
           </div>
         </div>
       </main>
-      <Footer />
+      <Footer phone={settings.phone} />
     </div>
   )
 }

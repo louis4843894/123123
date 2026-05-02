@@ -3,8 +3,7 @@ import { ArrowRight, Shield, Clock, Users, Star, ChevronRight } from 'lucide-rea
 import { Button } from '@/components/ui/button'
 import { Navbar } from '@/components/navbar'
 import { Footer } from '@/components/footer'
-import { getSettings } from '@/lib/db'
-import { getApprovedVendors } from '@/lib/db'
+import { getSettings, getApprovedVendors } from '@/lib/db'
 
 const FEATURES = [
   {
@@ -245,7 +244,7 @@ export default async function HomePage() {
         </section>
       </main>
 
-      <Footer />
+      <Footer phone={settings.phone} />
     </div>
   )
 }

@@ -1,9 +1,11 @@
 import { Suspense } from 'react'
 import { Navbar } from '@/components/navbar'
 import { Footer } from '@/components/footer'
+import { getSettings } from '@/lib/db'
 import { GuideContent } from './guide-content'
 
-export default function GuidePage() {
+export default async function GuidePage() {
+  const settings = getSettings()
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
@@ -12,7 +14,7 @@ export default function GuidePage() {
           <GuideContent />
         </Suspense>
       </main>
-      <Footer />
+      <Footer phone={settings.phone} />
     </div>
   )
 }

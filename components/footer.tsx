@@ -1,10 +1,10 @@
 import Link from 'next/link'
-import { getSettings } from '@/lib/db'
 
-export async function Footer() {
-  const settings = getSettings()
-  const phone = settings.phone
+interface FooterProps {
+  phone?: string
+}
 
+export function Footer({ phone = '0800-123-456' }: FooterProps) {
   return (
     <footer className="bg-primary text-primary-foreground mt-20">
       <div className="max-w-6xl mx-auto px-4 py-12">
