@@ -1,29 +1,59 @@
 import Link from 'next/link'
 import { Users, TrendingUp, ShieldAlert, BarChart3, ArrowRight } from 'lucide-react'
-import { ADMIN_STATS, MONTHLY_DATA, REGION_DATA, PENDING_VENDORS } from '@/lib/data'
 import { Button } from '@/components/ui/button'
+import { getSettings, getPendingVendors, getApprovedVendors } from '@/lib/db'
+import { MONTHLY_DATA, REGION_DATA } from '@/lib/data'
 import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip,
-  ResponsiveContainer, PieChart, Pie, Cell, Legend
+  ResponsiveContainer, PieChart, Pie, Cell
 } from 'recharts'
 
-const COLORS = ['oklch(0.62 0.06 145)', 'oklch(0.55 0.05 200)', 'oklch(0.65 0.08 55)', 'oklch(0.50 0.04 90)', 'oklch(0.70 0.06 30)', 'oklch(0.75 0.04 75)']
+const COLORS = ['oklch(0.475 0.090 230)', 'oklch(0.345 0.075 244)', 'oklch(0.60 0.07 210)', 'oklch(0.70 0.05 248)', 'oklch(0.55 0.08 260)', 'oklch(0.40 0.06 244)']
 
 export default function AdminDashboardPage() {
+  const settings = getSettings()
+  const pendingVendors = getPendingVendors()
+  const approvedVendors = getApprovedVendors()
+  const stats = settings.stats
+
   return (
     <div className="p-6">
       <div className="mb-6">
         <h1 className="text-2xl font-semibold">總覽儀表板</h1>
-        <p className="text-muted-foreground text-sm">靜途平台 · 2024年12月</p>
+        <p className="text-muted-foreground text-sm">靜途平台 · {new Date().toLocaleDateString('zh-TW', { year: 'numeric', month: 'long' })}</p>
       </div>
 
       {/* KPI grid */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         {[
-          { label: '累計案件數', value: ADMIN_STATS.totalCases.toLocaleString(), sub: `活躍案件 ${ADMIN_STATS.activeCases}`, icon: Users, color: 'text-blue-600' },
-          { label: '本月平台收入', value: `NT$${(ADMIN_STATS.monthlyRevenue * ADMIN_STATS.platformFeeRate / 10000).toFixed(0)}萬`, sub: `平均單價 ${(ADMIN_STATS.avgCaseValue / 10000).toFixed(0)}萬`, icon: TrendingUp, color: 'text-accent' },
-          { label: '待審核業者', value: ADMIN_STATS.pendingVendorApprovals, sub: '需要 24H 內處理', icon: ShieldAlert, color: 'text-amber-600' },
-          { label: '轉換率', value: `${(ADMIN_STATS.conversionRate * 100).toFixed(0)}%`, sub: `最熱門地區 ${ADMIN_STATS.topRegion}`, icon: BarChart3, color: 'text-green-600' },
+          {
+            label: '累計案件數',
+            value: stats.totalCases.toLocaleString(),
+            sub: `活躍案件 ${stats.activeCases}`,
+            icon: Users,
+            color: 'text-primary',
+          },
+          {
+            label: '本月平台收入',
+            value: `NT$${((stats.monthlyRevenue * stats.platformFeeRate) / 10000).toFixed(0)}萬`,
+            sub: `平均單價 ${(stats.avgCaseValue / 10000).toFixed(0)}萬`,
+            icon: TrendingUp,
+            color: 'text-accent',
+          },
+          {
+            label: '待審核業者',
+            value: pendingVendors.length,
+            sub: '需要 24H 內處理',
+            icon: ShieldAlert,
+            color: 'text-amber-600',
+          },
+          {
+            label: '轉換率',
+            value: `${(stats.conversionRate * 100).toFixed(0)}%`,
+            sub: `最熱門地區 ${stats.topRegion}`,
+            icon: BarChart3,
+            color: 'text-green-600',
+          },
         ].map(kpi => (
           <div key={kpi.label} className="bg-card border border-border rounded-xl p-5">
             <div className="flex items-center justify-between mb-3">
@@ -44,11 +74,11 @@ export default function AdminDashboardPage() {
             <AreaChart data={MONTHLY_DATA}>
               <defs>
                 <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="oklch(0.62 0.06 145)" stopOpacity={0.15} />
-                  <stop offset="95%" stopColor="oklch(0.62 0.06 145)" stopOpacity={0} />
+                  <stop offset="5%" stopColor="oklch(0.475 0.090 230)" stopOpacity={0.20} />
+                  <stop offset="95%" stopColor="oklch(0.475 0.090 230)" stopOpacity={0} />
                 </linearGradient>
               </defs>
-              <CartesianGrid strokeDasharray="3 3" stroke="oklch(0.88 0.01 75)" />
+              <CartesianGrid strokeDasharray="3 3" stroke="oklch(0.870 0.015 248)" />
               <XAxis dataKey="month" tick={{ fontSize: 11 }} />
               <YAxis yAxisId="left" tick={{ fontSize: 11 }} />
               <YAxis yAxisId="right" orientation="right" tick={{ fontSize: 11 }} />
@@ -57,8 +87,8 @@ export default function AdminDashboardPage() {
                   name === 'revenue' ? [`NT$${(v / 10000).toFixed(0)}萬`, '收入'] : [v, '案件']
                 }
               />
-              <Area yAxisId="right" type="monotone" dataKey="revenue" stroke="oklch(0.62 0.06 145)" fill="url(#colorRevenue)" strokeWidth={2} />
-              <Area yAxisId="left" type="monotone" dataKey="cases" stroke="oklch(0.50 0.04 90)" fill="none" strokeWidth={2} strokeDasharray="4 2" />
+              <Area yAxisId="right" type="monotone" dataKey="revenue" stroke="oklch(0.475 0.090 230)" fill="url(#colorRevenue)" strokeWidth={2} />
+              <Area yAxisId="left" type="monotone" dataKey="cases" stroke="oklch(0.345 0.075 244)" fill="none" strokeWidth={2} strokeDasharray="4 2" />
             </AreaChart>
           </ResponsiveContainer>
         </div>
@@ -94,9 +124,11 @@ export default function AdminDashboardPage() {
         <div className="px-5 py-4 border-b border-border flex items-center justify-between">
           <div className="flex items-center gap-2">
             <h2 className="font-semibold text-sm">待審核業者</h2>
-            <span className="text-xs bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full">
-              {PENDING_VENDORS.length} 待處理
-            </span>
+            {pendingVendors.length > 0 && (
+              <span className="text-xs bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full">
+                {pendingVendors.length} 待處理
+              </span>
+            )}
           </div>
           <Button asChild variant="ghost" size="sm" className="text-xs gap-1">
             <Link href="/admin/vendors">
@@ -104,15 +136,18 @@ export default function AdminDashboardPage() {
             </Link>
           </Button>
         </div>
-        {PENDING_VENDORS.map(v => (
+        {pendingVendors.length === 0 ? (
+          <div className="px-5 py-8 text-center text-sm text-muted-foreground">目前沒有待審核業者</div>
+        ) : pendingVendors.map(v => (
           <div key={v.id} className="px-5 py-4 border-b border-border last:border-0 flex items-center gap-4">
             <div className="flex-1 min-w-0">
               <p className="font-medium text-sm">{v.name}</p>
               <p className="text-xs text-muted-foreground">{v.region} · 申請日：{v.appliedAt} · 執照：{v.licenseNumber}</p>
             </div>
             <div className="flex gap-2">
-              <Button size="sm" className="text-xs bg-accent text-accent-foreground">核准</Button>
-              <Button size="sm" variant="outline" className="text-xs text-destructive border-destructive/30">拒絕</Button>
+              <Button asChild size="sm" className="text-xs bg-primary text-primary-foreground">
+                <Link href="/admin/vendors">審核</Link>
+              </Button>
             </div>
           </div>
         ))}

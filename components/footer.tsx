@@ -1,6 +1,10 @@
 import Link from 'next/link'
+import { getSettings } from '@/lib/db'
 
-export function Footer() {
+export async function Footer() {
+  const settings = getSettings()
+  const phone = settings.phone
+
   return (
     <footer className="bg-primary text-primary-foreground mt-20">
       <div className="max-w-6xl mx-auto px-4 py-12">
@@ -13,11 +17,11 @@ export function Footer() {
               24小時諮詢專線，讓您不孤單。
             </p>
             <a
-              href="tel:0800-123-456"
+              href={`tel:${phone}`}
               className="inline-flex items-center gap-2 mt-4 text-sm opacity-90 hover:opacity-100"
             >
               <span>免付費專線</span>
-              <span className="font-semibold">0800-123-456</span>
+              <span className="font-semibold">{phone}</span>
             </a>
           </div>
 
@@ -58,7 +62,7 @@ export function Footer() {
         </div>
 
         <div className="border-t border-primary-foreground/20 mt-8 pt-6 flex flex-col md:flex-row items-center justify-between gap-4 text-xs opacity-50">
-          <p>© 2024 靜途科技股份有限公司. 保留所有權利。</p>
+          <p>© {new Date().getFullYear()} 靜途科技股份有限公司. 保留所有權利。</p>
           <div className="flex gap-4">
             <Link href="/privacy" className="hover:opacity-100">隱私政策</Link>
             <Link href="/terms" className="hover:opacity-100">服務條款</Link>

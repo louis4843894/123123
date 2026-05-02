@@ -1,0 +1,35 @@
+[
+  {
+    "id": "pv1",
+    "name": "安詳禮儀有限公司",
+    "region": "新竹市",
+    "appliedAt": "2024-11-30",
+    "licenseNumber": "TC-2024-0234",
+    "contactName": "葉志明",
+    "phone": "03-5678-9012",
+    "email": "anshiang@example.com",
+    "status": "pending"
+  },
+  {
+    "id": "pv2",
+    "name": "蓮花殯葬服務",
+    "region": "宜蘭縣",
+    "appliedAt": "2024-11-29",
+    "licenseNumber": "TC-2024-0231",
+    "contactName": "吳惠芬",
+    "phone": "03-9012-3456",
+    "email": "lianhua@example.com",
+    "status": "pending"
+  },
+  {
+    "id": "pv3",
+    "name": "青松禮儀有限公司",
+    "region": "台南市",
+    "appliedAt": "2024-11-28",
+    "licenseNumber": "TC-2024-0228",
+    "contactName": "許建華",
+    "phone": "06-2345-6789",
+    "email": "qingsong@example.com",
+    "status": "pending"
+  }
+]

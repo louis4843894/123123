@@ -1,0 +1,27 @@
+[
+  {
+    "id": "u1",
+    "email": "admin@jingtv.com",
+    "passwordHash": "$2b$10$placeholder_admin",
+    "name": "平台管理員",
+    "role": "admin",
+    "createdAt": "2024-01-01"
+  },
+  {
+    "id": "u2",
+    "email": "vendor@jingtv.com",
+    "passwordHash": "$2b$10$placeholder_vendor",
+    "name": "慈恩禮儀",
+    "role": "vendor",
+    "vendorId": "v1",
+    "createdAt": "2024-01-01"
+  },
+  {
+    "id": "u3",
+    "email": "family@jingtv.com",
+    "passwordHash": "$2b$10$placeholder_family",
+    "name": "陳大明",
+    "role": "family",
+    "createdAt": "2024-01-01"
+  }
+]

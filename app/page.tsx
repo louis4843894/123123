@@ -3,6 +3,8 @@ import { ArrowRight, Shield, Clock, Users, Star, ChevronRight } from 'lucide-rea
 import { Button } from '@/components/ui/button'
 import { Navbar } from '@/components/navbar'
 import { Footer } from '@/components/footer'
+import { getSettings } from '@/lib/db'
+import { getApprovedVendors } from '@/lib/db'
 
 const FEATURES = [
   {
@@ -34,14 +36,18 @@ const STEPS = [
   { step: '04', title: '家人共同決定', desc: '邀請家屬加入，線上討論後共同確認方案。' },
 ]
 
-const STATS = [
-  { value: '892+', label: '服務案件' },
-  { value: '47', label: '認證業者' },
-  { value: '4.8', label: '平均評分' },
-  { value: '24H', label: '全天候服務' },
-]
+export default async function HomePage() {
+  const settings = getSettings()
+  const vendors = getApprovedVendors()
+  const stats = settings.stats
 
-export default function HomePage() {
+  const STATS = [
+    { value: `${stats.totalCases}+`, label: '服務案件' },
+    { value: String(vendors.length), label: '認證業者' },
+    { value: '4.8', label: '平均評分' },
+    { value: '24H', label: '全天候服務' },
+  ]
+
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
@@ -61,8 +67,7 @@ export default function HomePage() {
                 充滿<span className="text-accent">尊嚴</span>與溫度
               </h1>
               <p className="text-lg text-muted-foreground leading-relaxed mb-10 text-pretty max-w-lg">
-                台灣首個數位化殯葬服務整合平台，引導家屬從情緒中找到方向，
-                透明比較業者，讓家人共同做出最符合亡者心願的決定。
+                {settings.heroSubtitle}
               </p>
               <div className="flex flex-col sm:flex-row gap-3">
                 <Button asChild size="lg" className="bg-primary text-primary-foreground gap-2 text-base px-8">
