@@ -1,9 +1,20 @@
+
+殯殯有禮.html
+登入
+第
+1
+頁
+(
+共
+1
+頁)
+100%
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>靜途 — 數位後事服務平台</title>
+<title>殯殯有禮 — 數位後事服務平台</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@300;400;500&family=Noto+Sans+TC:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
@@ -497,6 +508,139 @@
   }
   .summary-items { font-size: 13.5px; color: var(--text-2); }
   .summary-price { font-size: 20px; font-weight: 500; color: var(--primary); }
+
+  /* ═══════════════════════════════════════════════
+     NEW FEATURE STYLES
+  ═══════════════════════════════════════════════ */
+
+  /* Multi-dimensional rating bars */
+  .rating-dims { display: flex; flex-direction: column; gap: 8px; }
+  .rating-dim-row { display: flex; align-items: center; gap: 10px; }
+  .rating-dim-label { width: 112px; font-size: 12px; color: var(--text-2); flex-shrink: 0; line-height: 1.35; }
+  .rating-dim-bar-wrap { flex: 1; height: 5px; background: var(--border-light); border-radius: 20px; overflow: hidden; }
+  .rating-dim-bar-fill { height: 100%; border-radius: 20px; transition: width 0.6s ease; }
+  .rating-dim-score { width: 26px; text-align: right; font-size: 12px; font-weight: 500; color: var(--text-2); flex-shrink: 0; }
+
+  /* Verification badges */
+  .verify-badges { display: flex; gap: 5px; flex-wrap: wrap; margin-top: 8px; }
+  .verify-badge {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 2px 8px; border-radius: 20px; font-size: 11px; line-height: 1.5;
+  }
+  .verify-badge.verified { background: #E8F5EE; color: #2A7A52; border: 1px solid #B3DEC8; }
+  .verify-badge.partial { background: #FEF8E7; color: #7A5A00; border: 1px solid #F0D080; }
+  .verify-badge.none { background: var(--surface-2); color: var(--text-3); border: 1px solid var(--border); }
+
+  /* Review cards */
+  .review-card {
+    background: var(--surface); border: 1px solid var(--border-light);
+    border-radius: var(--radius); padding: 18px 22px; margin-bottom: 12px;
+  }
+  .review-header { display: flex; justify-content: space-between; align-items: flex-start; }
+  .review-author { font-size: 14px; font-weight: 500; color: var(--text); }
+  .review-date { font-size: 12px; color: var(--text-3); }
+  .review-provider-tag { font-size: 11.5px; color: var(--primary); background: var(--tag-bg); padding: 2px 8px; border-radius: 20px; display: inline-block; margin-top: 3px; }
+  .review-text { font-size: 13.5px; color: var(--text-2); line-height: 1.65; margin-top: 10px; }
+
+  /* Provider aggregate score header */
+  .provider-score-header {
+    background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%);
+    border-radius: var(--radius-lg); padding: 22px 28px; margin-bottom: 20px; color: white;
+    display: grid; grid-template-columns: auto 1fr; gap: 24px; align-items: center;
+  }
+  .agg-score-big { font-family: 'Noto Serif TC', serif; font-size: 52px; font-weight: 300; line-height: 1; color: white; }
+  .agg-score-sub { font-size: 12px; color: rgba(255,255,255,0.6); margin-top: 4px; }
+  .agg-dims-white .rating-dim-label { color: rgba(255,255,255,0.75); width: 100px; }
+  .agg-dims-white .rating-dim-bar-wrap { background: rgba(255,255,255,0.2); }
+  .agg-dims-white .rating-dim-score { color: rgba(255,255,255,0.9); }
+  .agg-dims-white .rating-dim-bar-fill { background: rgba(255,255,255,0.85); }
+
+  /* Provider tabs */
+  .provider-tabs { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
+  .provider-tab {
+    padding: 7px 16px; border-radius: 8px; border: 1px solid var(--border);
+    background: var(--surface); font-size: 13.5px; color: var(--text-2);
+    cursor: pointer; transition: all 0.18s; font-family: 'Noto Sans TC', sans-serif;
+  }
+  .provider-tab:hover { border-color: var(--primary-light); color: var(--primary); background: var(--primary-pale); }
+  .provider-tab.active { background: var(--primary); color: white; border-color: var(--primary); }
+
+  /* Review form sliders */
+  .dim-slider-row { display: flex; align-items: center; gap: 12px; margin-bottom: 11px; }
+  .dim-slider-label { width: 108px; font-size: 12.5px; color: var(--text-2); flex-shrink: 0; }
+  .dim-slider { flex: 1; accent-color: var(--primary); cursor: pointer; }
+  .dim-slider-val { width: 22px; text-align: center; font-size: 13px; font-weight: 600; color: var(--primary); }
+
+  /* Verification checkboxes in form */
+  .verify-option {
+    display: flex; align-items: flex-start; gap: 10px;
+    padding: 10px 14px; border: 1px solid var(--border);
+    border-radius: var(--radius); margin-bottom: 8px; cursor: pointer;
+    transition: all 0.18s;
+  }
+  .verify-option:hover { border-color: var(--primary-light); background: var(--primary-pale); }
+  .verify-option input[type=checkbox] { accent-color: var(--primary); margin-top: 2px; flex-shrink: 0; }
+  .verify-option-title { font-size: 13.5px; color: var(--text); }
+  .verify-option-desc { font-size: 12px; color: var(--text-3); margin-top: 1px; line-height: 1.4; }
+
+  /* Knowledge base accordion */
+  .kb-item {
+    border: 1px solid var(--border-light); border-radius: var(--radius);
+    margin-bottom: 10px; overflow: hidden; background: var(--surface);
+  }
+  .kb-trigger {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 15px 20px; cursor: pointer; user-select: none; transition: background 0.18s;
+  }
+  .kb-trigger:hover { background: var(--surface-2); }
+  .kb-trigger.open { background: var(--primary-pale); }
+  .kb-trigger-left { display: flex; align-items: center; gap: 12px; }
+  .kb-icon { width: 38px; height: 38px; border-radius: 9px; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+  .kb-title { font-size: 15px; font-weight: 500; color: var(--text); }
+  .kb-subtitle { font-size: 12px; color: var(--text-3); margin-top: 2px; }
+  .kb-tag-inline { display: inline-block; padding: 1px 7px; border-radius: 20px; font-size: 10.5px; margin-left: 7px; vertical-align: middle; }
+  .kb-tag-green { background: #E8F5EE; color: #2A7A52; }
+  .kb-tag-blue { background: var(--tag-bg); color: var(--primary); }
+  .kb-tag-orange { background: #FEF0E6; color: #9B5A1A; }
+  .kb-tag-red { background: #FEE8E5; color: #B03A2E; }
+  .kb-chevron { transition: transform 0.28s; color: var(--text-3); font-size: 11px; }
+  .kb-trigger.open .kb-chevron { transform: rotate(180deg); }
+  .kb-body { display: none; padding: 18px 20px 20px; border-top: 1px solid var(--border-light); }
+  .kb-body.open { display: block; }
+  .kb-section { margin-bottom: 14px; }
+  .kb-section-title { font-size: 11px; font-weight: 500; color: var(--text-3); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 5px; }
+  .kb-text { font-size: 13.5px; color: var(--text-2); line-height: 1.72; }
+  .kb-list { list-style: none; padding: 0; display: flex; flex-direction: column; gap: 3px; margin-top: 5px; }
+  .kb-list li { font-size: 13.5px; color: var(--text-2); display: flex; gap: 8px; line-height: 1.55; }
+  .kb-list li::before { content: '·'; color: var(--primary-light); flex-shrink: 0; font-size: 16px; line-height: 1.3; }
+  .kb-callout { border-radius: 6px; padding: 10px 14px; margin-top: 10px; font-size: 13px; line-height: 1.65; }
+  .kb-callout.tip { background: #FEF8E7; border-left: 3px solid #D4A017; color: #6B4D00; }
+  .kb-callout.warn { background: #FEF0EF; border-left: 3px solid var(--danger); color: #7A1F1A; }
+  .kb-callout.info { background: var(--primary-pale); border-left: 3px solid var(--primary); color: var(--primary-dark); }
+  .kb-subsidy-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
+  .kb-subsidy-item { background: var(--surface-2); border: 1px solid var(--border-light); border-radius: 8px; padding: 12px 14px; }
+  .kb-subsidy-name { font-size: 13px; font-weight: 500; color: var(--text); margin-bottom: 3px; }
+  .kb-subsidy-amt { font-size: 15px; font-weight: 500; color: var(--primary); }
+  .kb-subsidy-note { font-size: 12px; color: var(--text-3); margin-top: 2px; }
+
+  /* Sort explanation */
+  .sort-explain {
+    background: var(--primary-pale); border: 1px solid var(--primary-light);
+    border-radius: var(--radius); padding: 12px 16px; margin-bottom: 18px;
+    font-size: 13px; color: var(--text-2); display: flex; align-items: flex-start; gap: 10px;
+    line-height: 1.6;
+  }
+
+  /* Ad badge */
+  .ad-label {
+    display: inline-block; padding: 1px 6px; border-radius: 4px; font-size: 10.5px;
+    background: #FFF3CD; color: #856404; border: 1px solid #FFDF70;
+    margin-left: 5px; vertical-align: middle; font-weight: 400;
+  }
+
+  /* Transparency score row */
+  .t-score-cell { font-size: 14px; font-weight: 600; color: var(--primary); }
+  .t-score-bar { display: inline-block; height: 4px; border-radius: 2px; background: var(--primary); vertical-align: middle; margin-left: 6px; opacity: 0.5; }
 </style>
 </head>
 <body>
@@ -505,8 +649,8 @@
 <!-- SIDEBAR -->
 <aside class="sidebar">
   <div class="sidebar-logo">
-    <div class="logo-name">靜途</div>
-    <div class="logo-sub">JÌNG TÚ · 數位後事服務</div>
+    <div class="logo-name">殯殯有禮</div>
+    <div class="logo-sub">數位後事服務</div>
   </div>
   <nav class="sidebar-nav">
     <div class="nav-item active" onclick="showPage('p1', this)">
@@ -547,6 +691,18 @@
       </svg>
       案件進度追蹤
       <span class="nav-badge">進行中</span>
+    </div>
+    <div class="nav-item" onclick="showPage('p7', this)">
+      <svg class="nav-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.4">
+        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+      </svg>
+      評價系統
+    </div>
+    <div class="nav-item" onclick="showPage('p8', this)">
+      <svg class="nav-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.4">
+        <path d="M9 4H5a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M16 3l1 1-7 7H8v-2l7-6z"/>
+      </svg>
+      知識庫
     </div>
   </nav>
   <div class="sidebar-footer">版本 1.0 · 僅供展示</div>
@@ -878,32 +1034,41 @@
         <div class="filter-chip" onclick="toggleFilter(this)">有契約範本</div>
         <div class="filter-chip" onclick="toggleFilter(this)">環保葬可選</div>
         <select class="select" style="font-size:13px;padding:5px 32px 5px 12px;">
-          <option>排序：綜合評分</option>
-          <option>排序：總價由低至高</option>
-          <option>排序：評價最高</option>
+          <option>自然排序：透明度優先（推薦）</option>
+          <option>自然排序：評價品質</option>
+          <option>自然排序：回覆速度</option>
+          <option>自然排序：資料完整度</option>
+          <option>總價由低至高</option>
         </select>
       </div>
+
+      <div class="sort-explain">
+        <svg style="width:16px;height:16px;flex-shrink:0;margin-top:2px;color:var(--primary);" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="10" cy="10" r="8"/><path d="M10 9v5M10 7v.5"/></svg>
+        <span><strong>自然排序</strong>依「透明度、回覆速度、評價品質、資料完整度」四項指標計算，與廣告完全分離。標示「<span class="ad-label">廣告</span>」的業者為付費置頂，不影響自然排序結果。如需查看六維評分細節，請前往<strong>評價系統</strong>頁面。</span>
+      </div>
+
       <div class="card" style="padding:0;overflow:hidden;">
         <div class="compare-table-wrapper">
           <table class="compare-table">
             <thead>
               <tr>
                 <th class="feature-col" style="width:160px;">項目</th>
-                <th>
+                <th class="compare-highlight">
                   <div class="compare-name">永安禮儀</div>
                   <div class="compare-price">NT$ 89,000</div>
                   <div class="star-row">★★★★★ <span class="rating-num">4.8 (132)</span></div>
-                  <span class="compare-badge">推薦</span>
+                  <span class="compare-badge">自然排序 #1</span>
                 </th>
                 <th>
-                  <div class="compare-name">祥和殯葬</div>
+                  <div class="compare-name">祥和殯葬<span class="ad-label">廣告</span></div>
                   <div class="compare-price">NT$ 72,000</div>
                   <div class="star-row">★★★★☆ <span class="rating-num">4.3 (88)</span></div>
                 </th>
-                <th>
+                <th class="compare-highlight">
                   <div class="compare-name">心安禮儀社</div>
                   <div class="compare-price">NT$ 105,000</div>
                   <div class="star-row">★★★★★ <span class="rating-num">4.9 (57)</span></div>
+                  <span class="compare-badge">自然排序 #2</span>
                 </th>
               </tr>
             </thead>
@@ -961,6 +1126,33 @@
                 <td class="compare-highlight">台北 / 新北 / 基隆</td>
                 <td>台北 / 新北</td>
                 <td class="compare-highlight">全台</td>
+              </tr>
+              <tr>
+                <td class="feature-col" style="color:var(--text);font-weight:500;">透明度分<br><span style="font-size:11px;font-weight:400;color:var(--text-3);">平台排序依據</span></td>
+                <td class="compare-highlight">
+                  <span class="t-score-cell">4.6</span>
+                  <span class="t-score-bar" style="width:46px;"></span>
+                </td>
+                <td>
+                  <span class="t-score-cell" style="color:var(--warning);">3.8</span>
+                  <span class="t-score-bar" style="width:38px;background:var(--warning);"></span>
+                </td>
+                <td class="compare-highlight">
+                  <span class="t-score-cell">4.8</span>
+                  <span class="t-score-bar" style="width:48px;"></span>
+                </td>
+              </tr>
+              <tr>
+                <td class="feature-col">六維評分細項</td>
+                <td class="compare-highlight">
+                  <button class="btn btn-sm" onclick="showPage('p7', document.querySelectorAll('.nav-item')[6]); switchReviewProvider('永安禮儀')">查看細項</button>
+                </td>
+                <td>
+                  <button class="btn btn-sm" onclick="showPage('p7', document.querySelectorAll('.nav-item')[6]); switchReviewProvider('祥和殯葬')">查看細項</button>
+                </td>
+                <td class="compare-highlight">
+                  <button class="btn btn-sm" onclick="showPage('p7', document.querySelectorAll('.nav-item')[6]); switchReviewProvider('心安禮儀社')">查看細項</button>
+                </td>
               </tr>
               <tr>
                 <td class="feature-col" style="border-bottom:none;"></td>
@@ -1242,8 +1434,384 @@
     </div>
   </div>
 
+  <!-- PAGE 7: 評價系統 -->
+  <div id="p7" class="page">
+    <div class="topbar">
+      <div>
+        <div class="topbar-title">評價系統</div>
+        <div class="topbar-sub">六維度評分 × 驗證機制 — 比單一總分更有參考價值</div>
+      </div>
+      <div class="topbar-actions">
+        <button class="btn btn-primary btn-sm" onclick="document.getElementById('reviewFormPanel').scrollIntoView({behavior:'smooth'})">撰寫評價</button>
+      </div>
+    </div>
+    <div style="padding:32px 36px;">
+
+      <!-- Provider tabs -->
+      <div class="provider-tabs" id="providerTabs">
+        <button class="provider-tab active" onclick="switchReviewProvider('永安禮儀',this)">永安禮儀</button>
+        <button class="provider-tab" onclick="switchReviewProvider('祥和殯葬',this)">祥和殯葬</button>
+        <button class="provider-tab" onclick="switchReviewProvider('心安禮儀社',this)">心安禮儀社</button>
+      </div>
+
+      <div class="grid-2" style="align-items:start;gap:24px;">
+        <!-- Left: Score + Reviews -->
+        <div>
+          <!-- Aggregate score header -->
+          <div class="provider-score-header" id="providerScoreHeader">
+            <!-- rendered by JS -->
+          </div>
+
+          <!-- Verification legend -->
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap;font-size:12.5px;color:var(--text-2);">
+            <span>評價驗證標章：</span>
+            <span class="verify-badge verified">✓ 服務完成驗證</span>
+            <span class="verify-badge verified">✓ 報價單已上傳</span>
+            <span class="verify-badge verified">✓ 契約已審閱</span>
+            <span class="verify-badge none">未驗證</span>
+          </div>
+
+          <!-- Review list -->
+          <div id="reviewList"><!-- rendered by JS --></div>
+        </div>
+
+        <!-- Right: Submit form -->
+        <div id="reviewFormPanel">
+          <div class="card">
+            <div class="card-title">撰寫評價</div>
+            <div class="card-sub">服務完成後方可提交，驗證憑據可提升評價可信度</div>
+
+            <!-- Provider selector -->
+            <div style="margin-bottom:16px;">
+              <div style="font-size:12.5px;color:var(--text-2);margin-bottom:6px;">評價業者</div>
+              <select class="select" id="formProvider" style="width:100%;">
+                <option>永安禮儀</option>
+                <option>祥和殯葬</option>
+                <option>心安禮儀社</option>
+              </select>
+            </div>
+
+            <!-- Verification options -->
+            <div style="font-size:12.5px;color:var(--text-2);margin-bottom:8px;">驗證方式（至少選一項）</div>
+            <label class="verify-option">
+              <input type="checkbox" id="v1" style="accent-color:var(--primary);">
+              <div>
+                <div class="verify-option-title">✓ 服務完成驗證</div>
+                <div class="verify-option-desc">案件編號或完工收據確認服務已履行完畢</div>
+              </div>
+            </label>
+            <label class="verify-option">
+              <input type="checkbox" id="v2" style="accent-color:var(--primary);">
+              <div>
+                <div class="verify-option-title">✓ 報價單已上傳</div>
+                <div class="verify-option-desc">上傳業者提供的正式報價單（PDF/圖片）</div>
+              </div>
+            </label>
+            <label class="verify-option">
+              <input type="checkbox" id="v3" style="accent-color:var(--primary);">
+              <div>
+                <div class="verify-option-title">✓ 契約已審閱</div>
+                <div class="verify-option-desc">服務契約已簽署並經平台核對</div>
+              </div>
+            </label>
+
+            <hr class="divider" style="margin:14px 0;">
+
+            <!-- 6 dimension sliders -->
+            <div style="font-size:12.5px;color:var(--text-2);margin-bottom:10px;">六維度評分（各 1–5 分）</div>
+            <div class="dim-slider-row">
+              <span class="dim-slider-label">價格透明度</span>
+              <input class="dim-slider" type="range" min="1" max="5" step="0.5" value="4" oninput="updateSlider('s1',this.value)" id="s1r">
+              <span class="dim-slider-val" id="s1">4.0</span>
+            </div>
+            <div class="dim-slider-row">
+              <span class="dim-slider-label">流程清楚度</span>
+              <input class="dim-slider" type="range" min="1" max="5" step="0.5" value="4" oninput="updateSlider('s2',this.value)" id="s2r">
+              <span class="dim-slider-val" id="s2">4.0</span>
+            </div>
+            <div class="dim-slider-row">
+              <span class="dim-slider-label">無臨時加價</span>
+              <input class="dim-slider" type="range" min="1" max="5" step="0.5" value="4" oninput="updateSlider('s3',this.value)" id="s3r">
+              <span class="dim-slider-val" id="s3">4.0</span>
+            </div>
+            <div class="dim-slider-row">
+              <span class="dim-slider-label">同理心</span>
+              <input class="dim-slider" type="range" min="1" max="5" step="0.5" value="4" oninput="updateSlider('s4',this.value)" id="s4r">
+              <span class="dim-slider-val" id="s4">4.0</span>
+            </div>
+            <div class="dim-slider-row">
+              <span class="dim-slider-label">準時度</span>
+              <input class="dim-slider" type="range" min="1" max="5" step="0.5" value="4" oninput="updateSlider('s5',this.value)" id="s5r">
+              <span class="dim-slider-val" id="s5">4.0</span>
+            </div>
+            <div class="dim-slider-row">
+              <span class="dim-slider-label">售後協助</span>
+              <input class="dim-slider" type="range" min="1" max="5" step="0.5" value="4" oninput="updateSlider('s6',this.value)" id="s6r">
+              <span class="dim-slider-val" id="s6">4.0</span>
+            </div>
+
+            <hr class="divider" style="margin:14px 0;">
+            <textarea class="comment-input" id="reviewTextInput" rows="4" style="width:100%;margin-bottom:10px;" placeholder="描述您的親身經歷，包含服務過程、費用是否如報價、人員態度等…"></textarea>
+            <div style="font-size:12px;color:var(--text-3);margin-bottom:10px;">評價一旦提交即公開顯示，請確保內容屬實。</div>
+            <button class="btn btn-primary" style="width:100%;" onclick="submitReview()">提交評價</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAGE 8: 知識庫 -->
+  <div id="p8" class="page">
+    <div class="topbar">
+      <div>
+        <div class="topbar-title">知識庫</div>
+        <div class="topbar-sub">了解各類後事選項與補助，降低對業者的單一依賴</div>
+      </div>
+    </div>
+    <div style="padding:32px 36px;">
+
+      <!-- Quick category grid -->
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:28px;">
+        <div onclick="openKB('kb-burial')" style="background:var(--surface);border:1px solid var(--border-light);border-radius:var(--radius);padding:14px 16px;cursor:pointer;text-align:center;transition:all 0.18s;" onmouseover="this.style.borderColor='var(--primary-light)';this.style.background='var(--primary-pale)'" onmouseout="this.style.borderColor='var(--border-light)';this.style.background='var(--surface)'">
+          <div style="font-size:22px;margin-bottom:6px;">🌿</div>
+          <div style="font-size:13.5px;font-weight:500;color:var(--text);">土葬</div>
+          <div style="font-size:12px;color:var(--text-3);margin-top:2px;">土埋葬儀流程</div>
+        </div>
+        <div onclick="openKB('kb-cremation')" style="background:var(--surface);border:1px solid var(--border-light);border-radius:var(--radius);padding:14px 16px;cursor:pointer;text-align:center;transition:all 0.18s;" onmouseover="this.style.borderColor='var(--primary-light)';this.style.background='var(--primary-pale)'" onmouseout="this.style.borderColor='var(--border-light)';this.style.background='var(--surface)'">
+          <div style="font-size:22px;margin-bottom:6px;">🏺</div>
+          <div style="font-size:13.5px;font-weight:500;color:var(--text);">火化</div>
+          <div style="font-size:12px;color:var(--text-3);margin-top:2px;">流程與費用</div>
+        </div>
+        <div onclick="openKB('kb-columbarium')" style="background:var(--surface);border:1px solid var(--border-light);border-radius:var(--radius);padding:14px 16px;cursor:pointer;text-align:center;transition:all 0.18s;" onmouseover="this.style.borderColor='var(--primary-light)';this.style.background='var(--primary-pale)'" onmouseout="this.style.borderColor='var(--border-light)';this.style.background='var(--surface)'">
+          <div style="font-size:22px;margin-bottom:6px;">🏛️</div>
+          <div style="font-size:13.5px;font-weight:500;color:var(--text);">塔位</div>
+          <div style="font-size:12px;color:var(--text-3);margin-top:2px;">靈骨塔選擇</div>
+        </div>
+        <div onclick="openKB('kb-green')" style="background:var(--surface);border:1px solid var(--border-light);border-radius:var(--radius);padding:14px 16px;cursor:pointer;text-align:center;transition:all 0.18s;" onmouseover="this.style.borderColor='var(--primary-light)';this.style.background='var(--primary-pale)'" onmouseout="this.style.borderColor='var(--border-light)';this.style.background='var(--surface)'">
+          <div style="font-size:22px;margin-bottom:6px;">🌳</div>
+          <div style="font-size:13.5px;font-weight:500;color:var(--text);">樹葬 / 海葬</div>
+          <div style="font-size:12px;color:var(--text-3);margin-top:2px;">環保葬選項</div>
+        </div>
+      </div>
+
+      <!-- Accordion -->
+      <div class="section-title" style="margin-bottom:16px;">詳細說明</div>
+
+      <!-- 1. 土葬 -->
+      <div class="kb-item" id="kb-burial">
+        <div class="kb-trigger" onclick="toggleKB(this)">
+          <div class="kb-trigger-left">
+            <div class="kb-icon" style="background:#E8F5EE;">🌿</div>
+            <div>
+              <div class="kb-title">土葬（土埋葬）<span class="kb-tag-inline kb-tag-blue">傳統</span></div>
+              <div class="kb-subtitle">遺體土埋入墓地，仍是部分地區主流選擇</div>
+            </div>
+          </div>
+          <span class="kb-chevron">▼</span>
+        </div>
+        <div class="kb-body">
+          <div class="kb-section">
+            <div class="kb-section-title">基本說明</div>
+            <div class="kb-text">土葬是將遺體直接埋入土地的傳統殯葬方式。台灣因土地資源有限，土葬需求逐漸減少，但仍受部分家庭因宗教或傳統因素選擇。依規定需在公立公墓或合法私立墓地進行，不得隨意選地。</div>
+          </div>
+          <div class="kb-section">
+            <div class="kb-section-title">費用估算</div>
+            <ul class="kb-list">
+              <li>公立公墓墓地使用費：NT$ 5,000–30,000（依縣市與地段）</li>
+              <li>墓碑製作：NT$ 15,000–50,000</li>
+              <li>開挖與掩埋工程：NT$ 8,000–15,000</li>
+              <li>後續年費（管理費）：NT$ 1,000–3,000 / 年</li>
+            </ul>
+          </div>
+          <div class="kb-callout tip">💡 建議事先確認所在縣市公墓是否仍有餘位，部分縣市已暫停受理新申請，需提前詢問。</div>
+          <div class="kb-section" style="margin-top:12px;">
+            <div class="kb-section-title">注意事項</div>
+            <ul class="kb-list">
+              <li>土葬後一定年限（約10–25年）後，多數縣市規定需起掘改葬（撿骨），骨骸移入骨灰罐後可置塔位。</li>
+              <li>私立墓地需確認地目合法，避免日後被迫遷葬。</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2. 火化 -->
+      <div class="kb-item" id="kb-cremation">
+        <div class="kb-trigger" onclick="toggleKB(this)">
+          <div class="kb-trigger-left">
+            <div class="kb-icon" style="background:#FEF0E6;">🏺</div>
+            <div>
+              <div class="kb-title">火化（火葬）<span class="kb-tag-inline kb-tag-orange">主流</span></div>
+              <div class="kb-subtitle">台灣現行最普遍的遺體處理方式，約佔 97%</div>
+            </div>
+          </div>
+          <span class="kb-chevron">▼</span>
+        </div>
+        <div class="kb-body">
+          <div class="kb-section">
+            <div class="kb-section-title">基本說明</div>
+            <div class="kb-text">火化是以高溫將遺體化為骨灰的處理方式。台灣目前火化率極高，公立火化爐遍布各縣市，費用相對低廉。火化完成後，骨灰可安置於靈骨塔（塔位）、進行樹葬、海葬，或由家屬自行保管於家中。</div>
+          </div>
+          <div class="kb-section">
+            <div class="kb-section-title">流程</div>
+            <ul class="kb-list">
+              <li>取得死亡證明書 → 辦理死亡登記</li>
+              <li>取得火化許可證</li>
+              <li>排定火化時間（公立爐需預約，一般 1–3 日內）</li>
+              <li>火化完成後領取骨灰（約 2–3 小時）</li>
+            </ul>
+          </div>
+          <div class="kb-section">
+            <div class="kb-section-title">費用估算</div>
+            <ul class="kb-list">
+              <li>公立火化爐費：NT$ 3,000–8,000（各縣市不同）</li>
+              <li>私立火化爐費：NT$ 20,000–40,000</li>
+              <li>骨灰罐（甕）：NT$ 3,000–30,000</li>
+            </ul>
+          </div>
+          <div class="kb-callout info">ℹ️ 部分業者會將「火化費」包入套餐中並顯著提高，建議要求業者拆項報價，確認使用的是公立還是私立爐。</div>
+        </div>
+      </div>
+
+      <!-- 3. 塔位 -->
+      <div class="kb-item" id="kb-columbarium">
+        <div class="kb-trigger" onclick="toggleKB(this)">
+          <div class="kb-trigger-left">
+            <div class="kb-icon" style="background:#E8EEF3;">🏛️</div>
+            <div>
+              <div class="kb-title">塔位（靈骨塔）<span class="kb-tag-inline kb-tag-blue">常見</span></div>
+              <div class="kb-subtitle">火化後骨灰的主要安置場所，分公立與私立</div>
+            </div>
+          </div>
+          <span class="kb-chevron">▼</span>
+        </div>
+        <div class="kb-body">
+          <div class="kb-section">
+            <div class="kb-section-title">公立 vs 私立塔位</div>
+            <ul class="kb-list">
+              <li><strong>公立靈骨塔</strong>：費用低廉（NT$ 1,000–5,000 起），由政府管理，安全有保障，但部分縣市有申請限制或等候期。</li>
+              <li><strong>私立靈骨塔</strong>：費用較高（NT$ 50,000–500,000+），位置選擇多元，需確認業者有合法立案，並注意年費條款。</li>
+            </ul>
+          </div>
+          <div class="kb-section">
+            <div class="kb-section-title">費用注意</div>
+            <ul class="kb-list">
+              <li>塔位售價以外，通常另有「管理費」「祭拜服務費」，需確認是否包含於報價。</li>
+              <li>部分私立塔位販售「永久使用權」，但依法最長為 50 年，購買前應詳讀合約。</li>
+            </ul>
+          </div>
+          <div class="kb-callout warn">⚠️ 警示：曾發生私立靈骨塔業者倒閉，骨灰無處安置的案例。請確認業者有向地方政府備查，並了解契約中的「業者倒閉處理條款」。</div>
+        </div>
+      </div>
+
+      <!-- 4. 樹葬 / 海葬 -->
+      <div class="kb-item" id="kb-green">
+        <div class="kb-trigger" onclick="toggleKB(this)">
+          <div class="kb-trigger-left">
+            <div class="kb-icon" style="background:#E8F5EE;">🌳</div>
+            <div>
+              <div class="kb-title">樹葬 ／ 海葬（環保葬）<span class="kb-tag-inline kb-tag-green">環保</span></div>
+              <div class="kb-subtitle">骨灰化入自然，近年逐漸受到重視</div>
+            </div>
+          </div>
+          <span class="kb-chevron">▼</span>
+        </div>
+        <div class="kb-body">
+          <div class="kb-section">
+            <div class="kb-section-title">樹葬</div>
+            <div class="kb-text">骨灰研磨後撒入指定植存區，通常在公立公墓內的環保區進行，不立碑、不設塔位，回歸自然。多數縣市提供免費或低費申請，但需預約，且不可自行選地。</div>
+          </div>
+          <div class="kb-section">
+            <div class="kb-section-title">海葬</div>
+            <div class="kb-text">骨灰撒入海中，通常由政府或合法業者安排船隻，在指定海域進行。台灣目前以集體海葬為主，家屬可隨行，儀式莊嚴但較為簡約。</div>
+          </div>
+          <div class="kb-section">
+            <div class="kb-section-title">費用估算</div>
+            <ul class="kb-list">
+              <li>公立樹葬：NT$ 0–3,000（含研磨費）</li>
+              <li>私立樹葬區：NT$ 10,000–30,000</li>
+              <li>海葬（集體）：NT$ 5,000–15,000</li>
+            </ul>
+          </div>
+          <div class="kb-callout tip">💡 環保葬一旦執行便無法復原，家屬宜事前充分討論，並確認逝者生前意願。</div>
+        </div>
+      </div>
+
+      <!-- 5. 政府補助 -->
+      <div class="kb-item" id="kb-subsidy">
+        <div class="kb-trigger" onclick="toggleKB(this)">
+          <div class="kb-trigger-left">
+            <div class="kb-icon" style="background:#FEF8E7;">💰</div>
+            <div>
+              <div class="kb-title">政府補助與申請<span class="kb-tag-inline kb-tag-orange">重要</span></div>
+              <div class="kb-subtitle">多項喪葬補助可申請，部分期限僅 6 個月</div>
+            </div>
+          </div>
+          <span class="kb-chevron">▼</span>
+        </div>
+        <div class="kb-body">
+          <div class="kb-section">
+            <div class="kb-section-title">常見補助項目</div>
+            <div class="kb-subsidy-grid">
+              <div class="kb-subsidy-item">
+                <div class="kb-subsidy-name">勞工保險喪葬補助</div>
+                <div class="kb-subsidy-amt">NT$ 45,000–135,000</div>
+                <div class="kb-subsidy-note">依月投保薪資 3–5 個月，申請期限：2年</div>
+              </div>
+              <div class="kb-subsidy-item">
+                <div class="kb-subsidy-name">國民年金喪葬給付</div>
+                <div class="kb-subsidy-amt">NT$ 45,800 起</div>
+                <div class="kb-subsidy-note">被保險人身故，家屬可申請，期限：2年</div>
+              </div>
+              <div class="kb-subsidy-item">
+                <div class="kb-subsidy-name">公教人員保險</div>
+                <div class="kb-subsidy-amt">依保額</div>
+                <div class="kb-subsidy-note">公務員適用，另計</div>
+              </div>
+              <div class="kb-subsidy-item">
+                <div class="kb-subsidy-name">中低收入戶喪葬補助</div>
+                <div class="kb-subsidy-amt">NT$ 5,000–30,000</div>
+                <div class="kb-subsidy-note">各縣市標準不同，申請期限：6 個月</div>
+              </div>
+            </div>
+          </div>
+          <div class="kb-callout warn">⚠️ 部分補助（如中低收入喪葬補助）申請期限僅 6 個月，往往因家屬不知情而逾期。建議服務完成後立即向業者或戶政事務所詢問。</div>
+          <div class="kb-callout tip">💡 業者的「文件代辦」服務通常可協助申請，確認代辦範圍是否包含補助申請再決定是否加購。</div>
+        </div>
+      </div>
+
+      <!-- 6. 常見消費陷阱 -->
+      <div class="kb-item" id="kb-traps">
+        <div class="kb-trigger" onclick="toggleKB(this)">
+          <div class="kb-trigger-left">
+            <div class="kb-icon" style="background:#FEE8E5;">⚠️</div>
+            <div>
+              <div class="kb-title">常見消費陷阱<span class="kb-tag-inline kb-tag-red">必讀</span></div>
+              <div class="kb-subtitle">監管報告揭示的高頻爭議，提前了解保護自己</div>
+            </div>
+          </div>
+          <span class="kb-chevron">▼</span>
+        </div>
+        <div class="kb-body">
+          <div class="kb-section">
+            <div class="kb-section-title">常見陷阱一覽</div>
+            <ul class="kb-list">
+              <li><strong>報價與實收金額不符：</strong>口頭報低價，簽約後附加「必要加項」，實際金額大幅超出。對策：堅持簽署書面報價單，確認所有項目逐條列出。</li>
+              <li><strong>緊急情境施壓：</strong>利用家屬悲痛或時間壓力，要求快速簽約。對策：平台緊急引導仍提供冷靜期，至少對比 2 家業者。</li>
+              <li><strong>模糊計費方式：</strong>冰存費「每日計費」但不告知確切天數與總額，或花藝佈置「依現場」報價。對策：要求所有費用給出上限估算。</li>
+              <li><strong>骨灰罐強制搭售：</strong>以「禮儀規定」為由，要求購買特定廠牌甕，不接受自購。對策：依法骨灰罐可自行選購，業者不得強制。</li>
+              <li><strong>塔位高壓推銷：</strong>在家屬情緒低落時推銷高價私立塔位，聲稱「公立已滿」。對策：各縣市公立靈骨塔資訊可向殯儀館或戶政直接查詢。</li>
+              <li><strong>口頭承諾不算數：</strong>口頭同意加贈項目，後來消失。對策：所有承諾需書面加入契約，不信口頭。</li>
+            </ul>
+          </div>
+          <div class="kb-callout warn">⚠️ 若已簽約但發現業者不履行契約內容或惡意加價，可向消保會（1950）或內政部殯葬管理處申訴。</div>
+          <div class="kb-callout info">ℹ️ 靜途平台的「六維評分」中「無臨時加價」維度，正是針對此類爭議設計，評分越高代表業者收費越誠信。</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
 </div><!-- .main -->
-</div><!-- .shell -->
 
 <script>
 // --- Navigation ---
@@ -1396,7 +1964,192 @@ function inviteMember() {
 
 // Init
 updateCalcPage();
+
+// ═══════════════════════════════════════════════
+// NEW FEATURE SCRIPTS
+// ═══════════════════════════════════════════════
+
+// --- Review database ---
+const reviewDB = {
+  '永安禮儀': {
+    dims: { price: 4.7, process: 4.6, noSurcharge: 4.5, empathy: 4.9, punctuality: 4.8, aftercare: 4.7 },
+    reviews: [
+      { author: 'W** 女士', date: '2024/04/18', verified: ['service','quote','contract'],
+        text: '業者全程非常有耐心，報價項目完全透明，沒有任何臨時追加費用，對家屬情緒的關懷也讓我們非常感動。強烈推薦。' },
+      { author: 'C** 先生', date: '2024/03/29', verified: ['service','quote'],
+        text: '接體到府後 20 分鐘就抵達，速度很快。事後文件代辦也順利完成，補助申請都幫我們弄好了。' },
+      { author: 'L** 女士', date: '2024/02/10', verified: ['service'],
+        text: '告別式流程清楚，主持人很有溫度。唯一小缺點是停車場有點難找，不過服務本身無可挑剔。' },
+    ]
+  },
+  '祥和殯葬': {
+    dims: { price: 4.1, process: 3.9, noSurcharge: 3.5, empathy: 4.0, punctuality: 4.2, aftercare: 3.8 },
+    reviews: [
+      { author: 'H** 先生', date: '2024/04/05', verified: ['quote'],
+        text: '初始報價不錯，但過程中追加了場地搬運費，事前沒有提到。最終金額多出約一萬多元，令人不太舒服。' },
+      { author: 'T** 女士', date: '2024/03/12', verified: [],
+        text: '整體尚可，工作人員態度還好，但對於流程的說明不太清楚，需要家屬主動問才會告知。' },
+    ]
+  },
+  '心安禮儀社': {
+    dims: { price: 4.8, process: 4.9, noSurcharge: 4.7, empathy: 5.0, punctuality: 4.9, aftercare: 4.8 },
+    reviews: [
+      { author: 'K** 女士', date: '2024/04/25', verified: ['service','quote','contract'],
+        text: '這是我見過最有溫度的殯葬業者。從一開始的諮詢、報價到儀式，每一個環節都照顧得非常細膩。費用與報價完全相符，無任何隱藏費用。' },
+      { author: 'P** 先生', date: '2024/04/01', verified: ['service','contract'],
+        text: '雖然費用較高，但服務品質完全對得起價格。告別式的安排非常用心，讓親友都留下了美好的記憶。售後的文件協助也很完整。' },
+      { author: 'A** 女士', date: '2024/02/28', verified: ['service','quote'],
+        text: '心安的工作人員讓我感受到他們真的把每一個家庭都放在心上，不只是完成一筆交易。準時、誠信、有愛心。' },
+    ]
+  }
+};
+
+const dimLabels = ['價格透明度', '流程清楚度', '無臨時加價', '同理心', '準時度', '售後協助'];
+const dimKeys   = ['price', 'process', 'noSurcharge', 'empathy', 'punctuality', 'aftercare'];
+const verifyLabels = { service: '服務完成驗證', quote: '報價單已上傳', contract: '契約已審閱' };
+
+let currentProvider = '永安禮儀';
+
+function switchReviewProvider(name, tabEl) {
+  currentProvider = name;
+  // update tabs
+  document.querySelectorAll('.provider-tab').forEach(t => t.classList.remove('active'));
+  if (tabEl) { tabEl.classList.add('active'); }
+  else {
+    document.querySelectorAll('.provider-tab').forEach(t => {
+      if (t.textContent.trim() === name) t.classList.add('active');
+    });
+  }
+  renderProviderScore(name);
+  renderReviews(name);
+}
+
+function avgScore(dims) {
+  const vals = dimKeys.map(k => dims[k]);
+  return (vals.reduce((s,v) => s+v, 0) / vals.length).toFixed(1);
+}
+
+function dimColor(score) {
+  if (score >= 4.5) return '#2E7D62';
+  if (score >= 3.5) return 'var(--primary)';
+  return 'var(--warning)';
+}
+
+function renderProviderScore(name) {
+  const data = reviewDB[name];
+  const avg = avgScore(data.dims);
+  const count = data.reviews.length;
+  const headerEl = document.getElementById('providerScoreHeader');
+  const dimsHtml = dimKeys.map((k, i) => {
+    const pct = (data.dims[k] / 5 * 100).toFixed(0);
+    return `<div class="rating-dim-row">
+      <span class="rating-dim-label">${dimLabels[i]}</span>
+      <div class="rating-dim-bar-wrap"><div class="rating-dim-bar-fill" style="width:${pct}%;background:rgba(255,255,255,0.8);"></div></div>
+      <span class="rating-dim-score">${data.dims[k].toFixed(1)}</span>
+    </div>`;
+  }).join('');
+  headerEl.innerHTML = `
+    <div>
+      <div class="agg-score-big">${avg}</div>
+      <div class="agg-score-sub">綜合均分 / 5.0<br>${count} 則已驗證評價</div>
+    </div>
+    <div class="rating-dims agg-dims-white">${dimsHtml}</div>
+  `;
+}
+
+function badgeHtml(verified) {
+  if (!verified || verified.length === 0) return '<span class="verify-badge none">未驗證</span>';
+  return verified.map(v => `<span class="verify-badge verified">✓ ${verifyLabels[v]}</span>`).join('');
+}
+
+function renderReviews(name) {
+  const data = reviewDB[name];
+  const listEl = document.getElementById('reviewList');
+  listEl.innerHTML = data.reviews.map(r => {
+    const dimsHtml = dimKeys.map((k, i) => {
+      const pct = (data.dims[k] / 5 * 100).toFixed(0);
+      const col = dimColor(data.dims[k]);
+      return `<div class="rating-dim-row">
+        <span class="rating-dim-label">${dimLabels[i]}</span>
+        <div class="rating-dim-bar-wrap"><div class="rating-dim-bar-fill" style="width:${pct}%;background:${col};"></div></div>
+        <span class="rating-dim-score" style="color:${col};">${data.dims[k].toFixed(1)}</span>
+      </div>`;
+    }).join('');
+    return `<div class="review-card">
+      <div class="review-header">
+        <div>
+          <div class="review-author">${r.author}</div>
+          <div class="review-date">${r.date}</div>
+        </div>
+        <div class="review-provider-tag">${name}</div>
+      </div>
+      <div class="verify-badges">${badgeHtml(r.verified)}</div>
+      <div class="review-dims-mini review-text" style="padding:10px 0 4px;">
+        <div class="rating-dims">${dimsHtml}</div>
+      </div>
+      <div class="review-text">${r.text}</div>
+    </div>`;
+  }).join('');
+}
+
+function updateSlider(id, val) {
+  document.getElementById(id).textContent = parseFloat(val).toFixed(1);
+}
+
+function submitReview() {
+  const text = document.getElementById('reviewTextInput').value.trim();
+  const provider = document.getElementById('formProvider').value;
+  if (!text) { alert('請填寫評價內容。'); return; }
+  const v1 = document.getElementById('v1').checked;
+  const v2 = document.getElementById('v2').checked;
+  const v3 = document.getElementById('v3').checked;
+  if (!v1 && !v2 && !v3) { alert('請至少選擇一項驗證方式。'); return; }
+  const verified = [];
+  if (v1) verified.push('service');
+  if (v2) verified.push('quote');
+  if (v3) verified.push('contract');
+  const sliders = ['s1r','s2r','s3r','s4r','s5r','s6r'];
+  const newDims = {};
+  dimKeys.forEach((k, i) => { newDims[k] = parseFloat(document.getElementById(sliders[i]).value); });
+  // Blend new review dims into existing averages
+  const db = reviewDB[provider];
+  const n = db.reviews.length;
+  dimKeys.forEach(k => {
+    db.dims[k] = parseFloat(((db.dims[k] * n + newDims[k]) / (n + 1)).toFixed(2));
+  });
+  db.reviews.unshift({ author: '您（匿名）', date: new Date().toLocaleDateString('zh-TW').replace(/\//g,'/'), verified, text });
+  document.getElementById('reviewTextInput').value = '';
+  [v1,v2,v3].forEach((_,i) => { document.getElementById('v'+(i+1)).checked = false; });
+  // Switch to submitted provider and re-render
+  switchReviewProvider(provider);
+  document.getElementById('providerScoreHeader').scrollIntoView({ behavior: 'smooth' });
+  alert(`✓ 評價已提交！感謝您的回饋，已為「${provider}」更新評分。`);
+}
+
+// --- Knowledge base accordion ---
+function toggleKB(trigger) {
+  const body = trigger.nextElementSibling;
+  const isOpen = trigger.classList.contains('open');
+  trigger.classList.toggle('open', !isOpen);
+  body.classList.toggle('open', !isOpen);
+}
+
+function openKB(id) {
+  const item = document.getElementById(id);
+  if (!item) return;
+  const trigger = item.querySelector('.kb-trigger');
+  const body = item.querySelector('.kb-body');
+  trigger.classList.add('open');
+  body.classList.add('open');
+  setTimeout(() => item.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
+}
+
+// Initialise review page with default provider
+document.addEventListener('DOMContentLoaded', function() {
+  renderProviderScore('永安禮儀');
+  renderReviews('永安禮儀');
+});
 </script>
 </body>
 </html>
-目前顯示的是「前台.html」。
+目前顯示的是「殯殯有禮.html」。
