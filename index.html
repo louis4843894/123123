@@ -48,21 +48,40 @@
     background: var(--primary-dark);
     display: flex; flex-direction: column;
     padding: 0;
-    position: sticky; top: 0; height: 100vh;
+    position: fixed; top: 0; left: 0; height: 100vh;
     overflow-y: auto;
+    z-index: 100;
+    transition: transform 0.28s cubic-bezier(0.4,0,0.2,1), width 0.28s cubic-bezier(0.4,0,0.2,1);
   }
+  /* Collapsed state */
+  .sidebar.collapsed {
+    width: 56px; min-width: 56px;
+  }
+  .sidebar.collapsed .sidebar-logo .logo-name,
+  .sidebar.collapsed .sidebar-logo .logo-sub,
+  .sidebar.collapsed .nav-item span.nav-label,
+  .sidebar.collapsed .nav-badge,
+  .sidebar.collapsed .sidebar-footer { opacity: 0; pointer-events: none; width: 0; overflow: hidden; }
+  .sidebar.collapsed .nav-item { padding: 11px 0; justify-content: center; }
+  .sidebar.collapsed .sidebar-logo { padding: 20px 0; display: flex; justify-content: center; }
+  .sidebar.collapsed .sidebar-logo .logo-name,
+  .sidebar.collapsed .sidebar-logo .logo-sub { display: none; }
   .sidebar-logo {
     padding: 28px 24px 20px;
     border-bottom: 1px solid rgba(255,255,255,0.10);
+    display: flex; align-items: flex-start; gap: 8px;
   }
+  .sidebar-logo-text { flex: 1; min-width: 0; }
   .sidebar-logo .logo-name {
     font-family: 'Noto Serif TC', serif;
     font-size: 22px; font-weight: 500;
     color: #FFFFFF; letter-spacing: 0.05em;
+    transition: opacity 0.2s;
   }
   .sidebar-logo .logo-sub {
     font-size: 11px; color: rgba(255,255,255,0.45);
     margin-top: 3px; letter-spacing: 0.08em;
+    transition: opacity 0.2s;
   }
   .sidebar-nav { flex: 1; padding: 16px 0; }
   .nav-item {
@@ -74,6 +93,7 @@
     transition: all 0.2s;
     font-size: 13.5px;
     user-select: none;
+    white-space: nowrap;
   }
   .nav-item:hover { color: rgba(255,255,255,0.90); background: rgba(255,255,255,0.06); }
   .nav-item.active {
@@ -89,16 +109,41 @@
     font-size: 11px;
     padding: 1px 7px;
     border-radius: 20px;
+    transition: opacity 0.2s;
   }
   .sidebar-footer {
     padding: 16px 20px;
     border-top: 1px solid rgba(255,255,255,0.10);
     font-size: 12px;
     color: rgba(255,255,255,0.35);
+    transition: opacity 0.2s;
+    white-space: nowrap;
   }
 
+  /* Sidebar toggle button */
+  .sidebar-toggle {
+    background: none; border: none; cursor: pointer;
+    color: rgba(255,255,255,0.70); padding: 4px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; margin-top: 4px;
+    border-radius: 6px; transition: background 0.18s;
+  }
+  .sidebar-toggle:hover { background: rgba(255,255,255,0.12); color: #fff; }
+
+  /* Overlay for mobile */
+  .sidebar-overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,0.38); z-index: 99;
+  }
+  .sidebar-overlay.visible { display: block; }
+
   /* Main */
-  .main { flex: 1; overflow-y: auto; min-width: 0; }
+  .main {
+    flex: 1; overflow-y: auto; min-width: 0;
+    margin-left: 220px;
+    transition: margin-left 0.28s cubic-bezier(0.4,0,0.2,1);
+  }
+  .main.sidebar-collapsed { margin-left: 56px; }
   .topbar {
     background: var(--surface);
     border-bottom: 1px solid var(--border);
@@ -106,6 +151,26 @@
     display: flex; align-items: center; justify-content: space-between;
     position: sticky; top: 0; z-index: 10;
   }
+  /* Hamburger button in topbar (mobile) */
+  .topbar-burger {
+    display: none;
+    background: none; border: none; cursor: pointer;
+    color: var(--text-2); padding: 4px;
+    border-radius: 6px; align-items: center; justify-content: center;
+    margin-right: 12px; transition: background 0.18s;
+  }
+  .topbar-burger:hover { background: var(--primary-pale); color: var(--primary); }
+
+  /* Page switch button */
+  .page-switch-btn {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 30px; height: 30px; border-radius: 7px;
+    border: 1px solid var(--border); background: var(--surface);
+    color: var(--text-3); cursor: pointer;
+    text-decoration: none; transition: all 0.18s;
+    flex-shrink: 0;
+  }
+  .page-switch-btn:hover { border-color: var(--primary-light); color: var(--primary); background: var(--primary-pale); }
   .topbar-title {
     font-family: 'Noto Serif TC', serif;
     font-size: 18px; font-weight: 400; color: var(--text);
@@ -612,6 +677,34 @@
   .kb-subsidy-amt { font-size: 15px; font-weight: 500; color: var(--primary); }
   .kb-subsidy-note { font-size: 12px; color: var(--text-3); margin-top: 2px; }
 
+  /* Responsive */
+  @media (max-width: 768px) {
+    .sidebar {
+      transform: translateX(-100%);
+      width: 220px !important; min-width: 220px !important;
+    }
+    .sidebar.mobile-open { transform: translateX(0); }
+    .sidebar.collapsed { transform: translateX(-100%); }
+    .main { margin-left: 0 !important; }
+    .topbar { padding: 12px 16px; }
+    .topbar-burger { display: flex; }
+    .page { padding: 20px 16px !important; }
+    .sticky-summary { padding: 12px 16px; }
+    .situation-grid { grid-template-columns: 1fr; }
+    .service-grid { grid-template-columns: 1fr 1fr; }
+    .grid-2 { grid-template-columns: 1fr; }
+    .compare-table-wrapper { overflow-x: auto; }
+    .budget-split { grid-template-columns: 1fr; }
+    .price-total-box { flex-direction: column; align-items: flex-start; gap: 8px; }
+    .topbar-actions .btn:not(.btn-primary) { display: none; }
+  }
+  @media (max-width: 480px) {
+    .service-grid { grid-template-columns: 1fr; }
+    .filter-bar { gap: 6px; }
+    .filter-chip { padding: 5px 10px; font-size: 12px; }
+    .topbar-title { font-size: 16px; }
+  }
+
   /* Sort explanation */
   .sort-explain {
     background: var(--primary-pale); border: 1px solid var(--primary-light);
@@ -633,65 +726,75 @@
 </style>
 </head>
 <body>
-<div class="shell">
+<div class="shell" style="display:block;">
+
+<!-- SIDEBAR OVERLAY (mobile) -->
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="closeMobileSidebar()"></div>
 
 <!-- SIDEBAR -->
-<aside class="sidebar">
+<aside class="sidebar" id="sidebar">
   <div class="sidebar-logo">
-    <div class="logo-name">殯殯有禮</div>
-    <div class="logo-sub">數位後事服務</div>
+    <div class="sidebar-logo-text">
+      <div class="logo-name">殯殯有禮</div>
+      <div class="logo-sub">數位後事服務</div>
+    </div>
+    <button class="sidebar-toggle" id="sidebarToggle" onclick="toggleSidebar()" title="收合選單" aria-label="收合側邊欄">
+      <svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6">
+        <path d="M4 6h12M4 10h12M4 14h12"/>
+      </svg>
+    </button>
   </div>
   <nav class="sidebar-nav">
     <div class="nav-item active" onclick="showPage('p1', this)">
       <svg class="nav-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.4">
         <circle cx="10" cy="10" r="8"/><path d="M10 6v4l3 2"/>
       </svg>
-      情境入口
+      <span class="nav-label">情境入口</span>
     </div>
     <div class="nav-item" onclick="showPage('p2', this)">
       <svg class="nav-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.4">
         <rect x="3" y="3" width="6" height="6" rx="1.5"/><rect x="11" y="3" width="6" height="6" rx="1.5"/>
         <rect x="3" y="11" width="6" height="6" rx="1.5"/><rect x="11" y="11" width="6" height="6" rx="1.5"/>
       </svg>
-      方案建構器
+      <span class="nav-label">方案建構器</span>
     </div>
     <div class="nav-item" onclick="showPage('p3', this)">
       <svg class="nav-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.4">
         <path d="M4 14l4-4 3 3 5-6"/><rect x="2" y="2" width="16" height="16" rx="2"/>
       </svg>
-      總價試算器
+      <span class="nav-label">總價試算器</span>
     </div>
     <div class="nav-item" onclick="showPage('p4', this)">
       <svg class="nav-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.4">
         <path d="M2 5h16M2 10h16M2 15h16M7 2v16M13 2v16" stroke-width="1.2"/>
       </svg>
-      比較頁
+      <span class="nav-label">比較頁</span>
       <span class="nav-badge">3</span>
     </div>
     <div class="nav-item" onclick="showPage('p5', this)">
       <svg class="nav-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.4">
         <path d="M17 11a5 5 0 01-5 5H6l-3 3V6a5 5 0 015-5h4a5 5 0 015 5v5z"/>
       </svg>
-      家庭共決空間
+      <span class="nav-label">家庭共決空間</span>
     </div>
     <div class="nav-item" onclick="showPage('p6', this)">
       <svg class="nav-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.4">
         <circle cx="10" cy="10" r="8"/><path d="M10 6v4l3 2"/>
       </svg>
-      案件進度追蹤
+      <span class="nav-label">案件進度追蹤</span>
       <span class="nav-badge">進行中</span>
     </div>
     <div class="nav-item" onclick="showPage('p7', this)">
       <svg class="nav-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.4">
         <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
       </svg>
-      評價系統
+      <span class="nav-label">評價系統</span>
     </div>
     <div class="nav-item" onclick="showPage('p8', this)">
       <svg class="nav-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.4">
         <path d="M9 4H5a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M16 3l1 1-7 7H8v-2l7-6z"/>
       </svg>
-      知識庫
+      <span class="nav-label">知識庫</span>
     </div>
   </nav>
   <div class="sidebar-footer">版本 1.0 · 僅供展示</div>
@@ -703,12 +806,24 @@
   <!-- PAGE 1: 情境入口 -->
   <div id="p1" class="page active">
     <div class="topbar">
-      <div>
-        <div class="topbar-title">情境入口</div>
-        <div class="topbar-sub">請先告訴我們，您目前的情況是？</div>
+      <div style="display:flex;align-items:center;gap:0;">
+        <button class="topbar-burger" onclick="openMobileSidebar()" aria-label="開啟選單">
+          <svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.7">
+            <path d="M3 6h16M3 11h16M3 16h16"/>
+          </svg>
+        </button>
+        <div>
+          <div class="topbar-title">情境入口</div>
+          <div class="topbar-sub">請先告訴我們，您目前的情況是？</div>
+        </div>
       </div>
-      <div class="topbar-actions">
-        <button class="btn btn-sm">需要協助？</button>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <a href="admin.html" class="page-switch-btn" title="切換至業者後台">
+          <svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="14" height="14" rx="2"/><path d="M7 7h6M7 10h6M7 13h4"/></svg>
+        </a>
+        <div class="topbar-actions">
+          <button class="btn btn-sm">需要協助？</button>
+        </div>
       </div>
     </div>
     <div style="padding:32px 36px;">
@@ -804,9 +919,14 @@
   <!-- PAGE 2: 方案建構器 -->
   <div id="p2" class="page">
     <div class="topbar">
-      <div>
-        <div class="topbar-title">方案建構器</div>
-        <div class="topbar-sub">勾選需要的服務項目，系統將即時計算費用</div>
+      <div style="display:flex;align-items:center;gap:0;">
+        <button class="topbar-burger" onclick="openMobileSidebar()" aria-label="開啟選單">
+          <svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M3 6h16M3 11h16M3 16h16"/></svg>
+        </button>
+        <div>
+          <div class="topbar-title">方案建構器</div>
+          <div class="topbar-sub">勾選需要的服務項目，系統將即時計算費用</div>
+        </div>
       </div>
       <div class="topbar-actions">
         <button class="btn btn-sm" onclick="showPage('p3', document.querySelectorAll('.nav-item')[2])">進入試算器</button>
@@ -916,9 +1036,14 @@
   <!-- PAGE 3: 總價試算器 -->
   <div id="p3" class="page">
     <div class="topbar">
-      <div>
-        <div class="topbar-title">總價試算器</div>
-        <div class="topbar-sub">所有選項即時反映於總金額，費用明確透明</div>
+      <div style="display:flex;align-items:center;gap:0;">
+        <button class="topbar-burger" onclick="openMobileSidebar()" aria-label="開啟選單">
+          <svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M3 6h16M3 11h16M3 16h16"/></svg>
+        </button>
+        <div>
+          <div class="topbar-title">總價試算器</div>
+          <div class="topbar-sub">所有選項即時反映於總金額，費用明確透明</div>
+        </div>
       </div>
     </div>
     <div style="padding:32px 36px;">
@@ -944,7 +1069,7 @@
               <input class="input" id="newItemPrice" type="number" placeholder="金額（NT$）" style="width:100%;">
               <select class="select" id="newItemType" style="width:100%;">
                 <option value="optional">可選加購</option>
-                <option value="required">必要費用</option>
+                <option value="required">���要費用</option>
                 <option value="extra">常見額外</option>
               </select>
               <div style="display:flex;gap:8px;">
@@ -978,7 +1103,7 @@
                 <div style="font-size:13px;color:var(--text-2);">根據家屬需求彈性選擇，可任意增減，不影響必要程序。</div>
               </div>
               <div style="padding:12px 14px;background:var(--surface-2);border-radius:8px;border-left:3px solid var(--text-3);">
-                <div style="font-size:12.5px;font-weight:500;color:var(--text-2);margin-bottom:3px;">常見額外費用</div>
+                <div style="font-size:12.5px;font-weight:500;color:var(--text-2);margin-bottom:3px;">常見額外���用</div>
                 <div style="font-size:13px;color:var(--text-2);">塔位、法會等費用常在決策後才產生，建議提前納入預算估算。</div>
               </div>
             </div>
@@ -1005,9 +1130,14 @@
   <!-- PAGE 4: 比較頁 -->
   <div id="p4" class="page">
     <div class="topbar">
-      <div>
-        <div class="topbar-title">比較頁</div>
-        <div class="topbar-sub">同時比較多家業者，找到最適合的方案</div>
+      <div style="display:flex;align-items:center;gap:0;">
+        <button class="topbar-burger" onclick="openMobileSidebar()" aria-label="開啟選單">
+          <svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M3 6h16M3 11h16M3 16h16"/></svg>
+        </button>
+        <div>
+          <div class="topbar-title">比較頁</div>
+          <div class="topbar-sub">同時比較多家業者，找到最適合的方案</div>
+        </div>
       </div>
       <div class="topbar-actions">
         <button class="btn btn-sm">＋ 新增業者</button>
@@ -1025,7 +1155,7 @@
         <select class="select" style="font-size:13px;padding:5px 32px 5px 12px;">
           <option>自然排序：透明度優先（推薦）</option>
           <option>自然排序：評價品質</option>
-          <option>自然排序：回覆速度</option>
+          <option>自���排序：回覆速度</option>
           <option>自然排序：資料完整度</option>
           <option>總價由低至高</option>
         </select>
@@ -1069,7 +1199,7 @@
                 <td class="compare-highlight"><span class="check-icon">✓</span></td>
               </tr>
               <tr>
-                <td class="feature-col">冰存（3日）</td>
+                <td class="feature-col">冰存（3日��</td>
                 <td class="compare-highlight">NT$ 8,000</td>
                 <td>NT$ 6,000</td>
                 <td class="compare-highlight">NT$ 9,000</td>
@@ -1168,9 +1298,14 @@
   <!-- PAGE 5: 家庭共決空間 -->
   <div id="p5" class="page">
     <div class="topbar">
-      <div>
-        <div class="topbar-title">家庭共決空間</div>
-        <div class="topbar-sub">家屬共同查看方案、留言討論與確認費用分攤</div>
+      <div style="display:flex;align-items:center;gap:0;">
+        <button class="topbar-burger" onclick="openMobileSidebar()" aria-label="開啟選單">
+          <svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M3 6h16M3 11h16M3 16h16"/></svg>
+        </button>
+        <div>
+          <div class="topbar-title">家庭共決空間</div>
+          <div class="topbar-sub">家屬共同查看方案、留言討論與確認費用分攤</div>
+        </div>
       </div>
       <div class="topbar-actions">
         <button class="btn btn-sm" onclick="inviteMember()">＋ 邀請家屬</button>
@@ -1265,9 +1400,14 @@
   <!-- PAGE 6: 案件進度追蹤 -->
   <div id="p6" class="page">
     <div class="topbar">
-      <div>
-        <div class="topbar-title">案件進度追蹤</div>
-        <div class="topbar-sub">從諮詢到結案，全程透明掌握</div>
+      <div style="display:flex;align-items:center;gap:0;">
+        <button class="topbar-burger" onclick="openMobileSidebar()" aria-label="開啟選單">
+          <svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M3 6h16M3 11h16M3 16h16"/></svg>
+        </button>
+        <div>
+          <div class="topbar-title">案件進度追蹤</div>
+          <div class="topbar-sub">從諮詢到結案，全程透明掌握</div>
+        </div>
       </div>
       <div class="topbar-actions">
         <button class="btn btn-sm">下載進度報告</button>
@@ -1426,9 +1566,14 @@
   <!-- PAGE 7: 評價系統 -->
   <div id="p7" class="page">
     <div class="topbar">
-      <div>
-        <div class="topbar-title">評價系統</div>
-        <div class="topbar-sub">六維度評分 × 驗證機制 — 比單一總分更有參考價值</div>
+      <div style="display:flex;align-items:center;gap:0;">
+        <button class="topbar-burger" onclick="openMobileSidebar()" aria-label="開啟選單">
+          <svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M3 6h16M3 11h16M3 16h16"/></svg>
+        </button>
+        <div>
+          <div class="topbar-title">評價系統</div>
+          <div class="topbar-sub">六維度評分 × 驗證機制 — 比單一總分更有參考價值</div>
+        </div>
       </div>
       <div class="topbar-actions">
         <button class="btn btn-primary btn-sm" onclick="document.getElementById('reviewFormPanel').scrollIntoView({behavior:'smooth'})">撰寫評價</button>
@@ -1500,7 +1645,7 @@
               <input type="checkbox" id="v3" style="accent-color:var(--primary);">
               <div>
                 <div class="verify-option-title">✓ 契約已審閱</div>
-                <div class="verify-option-desc">服務契約已簽署並經平台核對</div>
+                <div class="verify-option-desc">服務��約已簽署並經平台核對</div>
               </div>
             </label>
 
@@ -1552,9 +1697,14 @@
   <!-- PAGE 8: 知識庫 -->
   <div id="p8" class="page">
     <div class="topbar">
-      <div>
-        <div class="topbar-title">知識庫</div>
-        <div class="topbar-sub">了解各類後事選項與補助，降低對業者的單一依賴</div>
+      <div style="display:flex;align-items:center;gap:0;">
+        <button class="topbar-burger" onclick="openMobileSidebar()" aria-label="開啟選單">
+          <svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M3 6h16M3 11h16M3 16h16"/></svg>
+        </button>
+        <div>
+          <div class="topbar-title">知識庫</div>
+          <div class="topbar-sub">了解各類後事選項與補助，降低對業者的單一依賴</div>
+        </div>
       </div>
     </div>
     <div style="padding:32px 36px;">
@@ -1749,7 +1899,7 @@
               <div class="kb-subsidy-item">
                 <div class="kb-subsidy-name">國民年金喪葬給付</div>
                 <div class="kb-subsidy-amt">NT$ 45,800 起</div>
-                <div class="kb-subsidy-note">被保險人身故，家屬可申請，期限：2年</div>
+                <div class="kb-subsidy-note">被保險���身故，家屬可申請，期限：2年</div>
               </div>
               <div class="kb-subsidy-item">
                 <div class="kb-subsidy-name">公教人員保險</div>
@@ -1788,7 +1938,7 @@
               <li><strong>緊急情境施壓：</strong>利用家屬悲痛或時間壓力，要求快速簽約。對策：平台緊急引導仍提供冷靜期，至少對比 2 家業者。</li>
               <li><strong>模糊計費方式：</strong>冰存費「每日計費」但不告知確切天數與總額，或花藝佈置「依現場」報價。對策：要求所有費用給出上限估算。</li>
               <li><strong>骨灰罐強制搭售：</strong>以「禮儀規定」為由，要求購買特定廠牌甕，不接受自購。對策：依法骨灰罐可自行選購，業者不得強制。</li>
-              <li><strong>塔位高壓推銷：</strong>在家屬情緒低落時推銷高價私立塔位，聲稱「公立已滿」。對策：各縣市公立靈骨塔資訊可向殯儀館或戶政直接查詢。</li>
+              <li><strong>塔位高壓推銷：</strong>在家屬情緒低落時推銷高價私立塔位，聲稱「公立已滿」。對策：各縣市公立靈骨��資訊可向殯儀館或戶政直接查詢。</li>
               <li><strong>口頭承諾不算數：</strong>口頭同意加贈項目，後來消失。對策：所有承諾需書面加入契約，不信口頭。</li>
             </ul>
           </div>
@@ -1803,6 +1953,22 @@
 </div><!-- .main -->
 
 <script>
+// --- Sidebar toggle ---
+function toggleSidebar() {
+  const sidebar = document.getElementById('sidebar');
+  const main = document.getElementById('mainArea');
+  const isCollapsed = sidebar.classList.toggle('collapsed');
+  main.classList.toggle('sidebar-collapsed', isCollapsed);
+}
+function openMobileSidebar() {
+  document.getElementById('sidebar').classList.add('mobile-open');
+  document.getElementById('sidebarOverlay').classList.add('visible');
+}
+function closeMobileSidebar() {
+  document.getElementById('sidebar').classList.remove('mobile-open');
+  document.getElementById('sidebarOverlay').classList.remove('visible');
+}
+
 // --- Navigation ---
 function showPage(id, navEl) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
@@ -1810,6 +1976,7 @@ function showPage(id, navEl) {
   document.getElementById(id).classList.add('active');
   if (navEl) navEl.classList.add('active');
   document.getElementById('mainArea').scrollTop = 0;
+  closeMobileSidebar();
 }
 
 // --- Page 1: Situation ---
