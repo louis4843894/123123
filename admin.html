@@ -39,13 +39,28 @@
     width: 230px; min-width: 230px;
     background: var(--primary-dark);
     display: flex; flex-direction: column;
-    position: sticky; top: 0; height: 100vh;
-    overflow-y: auto;
+    position: fixed; top: 0; left: 0; height: 100vh;
+    overflow-y: auto; z-index: 100;
+    transition: transform 0.28s cubic-bezier(0.4,0,0.2,1), width 0.28s cubic-bezier(0.4,0,0.2,1);
   }
-  .sidebar-logo { padding: 24px 22px 18px; border-bottom: 1px solid rgba(255,255,255,0.10); }
-  .logo-platform { font-size: 11px; color: rgba(255,255,255,0.38); letter-spacing: 0.1em; margin-bottom: 4px; }
-  .logo-name { font-family: 'Noto Serif TC', serif; font-size: 20px; font-weight: 400; color: #FFF; letter-spacing: 0.04em; }
-  .logo-tag { display: inline-block; margin-top: 6px; padding: 2px 9px; border-radius: 20px; background: rgba(122,162,192,0.25); font-size: 11px; color: rgba(255,255,255,0.65); }
+  .sidebar.collapsed {
+    width: 56px; min-width: 56px;
+  }
+  .sidebar.collapsed .logo-platform,
+  .sidebar.collapsed .logo-name,
+  .sidebar.collapsed .logo-tag,
+  .sidebar.collapsed .sidebar-vendor,
+  .sidebar.collapsed .nav-badge,
+  .sidebar.collapsed .nav-badge-blue,
+  .sidebar.collapsed .sidebar-footer,
+  .sidebar.collapsed .nav-label { opacity: 0; pointer-events: none; width: 0; overflow: hidden; display: none; }
+  .sidebar.collapsed .nav-item { padding: 11px 0; justify-content: center; }
+  .sidebar.collapsed .sidebar-logo-wrap { justify-content: center; padding: 18px 0; }
+  .sidebar-logo-wrap { padding: 24px 22px 18px; border-bottom: 1px solid rgba(255,255,255,0.10); display: flex; align-items: flex-start; gap: 8px; }
+  .sidebar-logo-text { flex: 1; min-width: 0; }
+  .logo-platform { font-size: 11px; color: rgba(255,255,255,0.38); letter-spacing: 0.1em; margin-bottom: 4px; transition: opacity 0.2s; }
+  .logo-name { font-family: 'Noto Serif TC', serif; font-size: 20px; font-weight: 400; color: #FFF; letter-spacing: 0.04em; transition: opacity 0.2s; }
+  .logo-tag { display: inline-block; margin-top: 6px; padding: 2px 9px; border-radius: 20px; background: rgba(122,162,192,0.25); font-size: 11px; color: rgba(255,255,255,0.65); transition: opacity 0.2s; }
   .sidebar-nav { flex: 1; padding: 14px 0; }
   .nav-section-label { padding: 10px 20px 4px; font-size: 10.5px; letter-spacing: 0.12em; color: rgba(255,255,255,0.28); text-transform: uppercase; }
   .nav-item {
@@ -53,20 +68,64 @@
     padding: 11px 20px; color: rgba(255,255,255,0.62);
     cursor: pointer; border-left: 3px solid transparent;
     transition: all 0.2s; font-size: 13.5px; user-select: none;
+    white-space: nowrap;
   }
   .nav-item:hover { color: rgba(255,255,255,0.90); background: rgba(255,255,255,0.06); }
   .nav-item.active { color: #FFF; background: rgba(255,255,255,0.10); border-left-color: var(--primary-light); }
   .nav-icon { width: 17px; height: 17px; flex-shrink: 0; }
-  .nav-badge { margin-left: auto; background: #C0392B; color: #fff; font-size: 11px; padding: 1px 7px; border-radius: 20px; }
-  .nav-badge-blue { margin-left: auto; background: var(--primary-light); color: #fff; font-size: 11px; padding: 1px 7px; border-radius: 20px; }
-  .sidebar-vendor { margin: 12px 16px; background: rgba(255,255,255,0.08); border-radius: var(--radius); padding: 12px 14px; }
+  .nav-badge { margin-left: auto; background: #C0392B; color: #fff; font-size: 11px; padding: 1px 7px; border-radius: 20px; transition: opacity 0.2s; }
+  .nav-badge-blue { margin-left: auto; background: var(--primary-light); color: #fff; font-size: 11px; padding: 1px 7px; border-radius: 20px; transition: opacity 0.2s; }
+  .sidebar-vendor { margin: 12px 16px; background: rgba(255,255,255,0.08); border-radius: var(--radius); padding: 12px 14px; transition: opacity 0.2s; }
   .sidebar-vendor-name { font-size: 13.5px; color: #fff; font-weight: 500; margin-bottom: 2px; }
   .sidebar-vendor-sub { font-size: 12px; color: rgba(255,255,255,0.45); }
-  .sidebar-footer { padding: 14px 20px; border-top: 1px solid rgba(255,255,255,0.10); font-size: 12px; color: rgba(255,255,255,0.30); }
+  .sidebar-footer { padding: 14px 20px; border-top: 1px solid rgba(255,255,255,0.10); font-size: 12px; color: rgba(255,255,255,0.30); white-space: nowrap; transition: opacity 0.2s; }
+
+  /* Sidebar toggle button */
+  .sidebar-toggle {
+    background: none; border: none; cursor: pointer;
+    color: rgba(255,255,255,0.70); padding: 4px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; margin-top: 4px;
+    border-radius: 6px; transition: background 0.18s;
+  }
+  .sidebar-toggle:hover { background: rgba(255,255,255,0.12); color: #fff; }
+
+  /* Overlay for mobile */
+  .sidebar-overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,0.38); z-index: 99;
+  }
+  .sidebar-overlay.visible { display: block; }
 
   /* Main */
-  .main { flex: 1; overflow-y: auto; min-width: 0; }
+  .main {
+    flex: 1; overflow-y: auto; min-width: 0;
+    margin-left: 230px;
+    transition: margin-left 0.28s cubic-bezier(0.4,0,0.2,1);
+  }
+  .main.sidebar-collapsed { margin-left: 56px; }
   .topbar { background: var(--surface); border-bottom: 1px solid var(--border); padding: 16px 36px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 10; }
+
+  /* Hamburger button in topbar (mobile) */
+  .topbar-burger {
+    display: none;
+    background: none; border: none; cursor: pointer;
+    color: var(--text-2); padding: 4px;
+    border-radius: 6px; align-items: center; justify-content: center;
+    margin-right: 12px; transition: background 0.18s;
+  }
+  .topbar-burger:hover { background: var(--primary-pale); color: var(--primary); }
+
+  /* Page switch button */
+  .page-switch-btn {
+    display: inline-flex; align-items: center; gap: 7px;
+    padding: 7px 16px; border-radius: 8px;
+    border: 1px solid var(--border); background: var(--surface);
+    color: var(--text-2); cursor: pointer;
+    font-size: 13px; font-family: 'Noto Sans TC', sans-serif;
+    text-decoration: none; transition: all 0.18s;
+  }
+  .page-switch-btn:hover { border-color: var(--primary-light); color: var(--primary); background: var(--primary-pale); }
   .topbar-title { font-family: 'Noto Serif TC', serif; font-size: 18px; font-weight: 400; color: var(--text); }
   .topbar-sub { font-size: 13px; color: var(--text-3); margin-top: 1px; }
   .topbar-actions { display: flex; gap: 10px; align-items: center; }
@@ -260,17 +319,58 @@
   .mini-trend { display: flex; align-items: flex-end; gap: 3px; height: 28px; }
   .mini-bar { background: var(--primary-light); border-radius: 2px; width: 10px; transition: background 0.15s; }
   .trend-label { font-size: 12px; color: var(--text-3); margin-top: 6px; display: flex; justify-content: space-between; }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .sidebar {
+      transform: translateX(-100%);
+      width: 230px !important; min-width: 230px !important;
+    }
+    .sidebar.mobile-open { transform: translateX(0); }
+    .sidebar.collapsed { transform: translateX(-100%); }
+    .main { margin-left: 0 !important; }
+    .topbar { padding: 12px 16px; }
+    .topbar-burger { display: flex; }
+    .page { padding: 20px 16px !important; }
+    .grid-2 { grid-template-columns: 1fr; }
+    .grid-3 { grid-template-columns: 1fr 1fr; }
+    .grid-4 { grid-template-columns: 1fr 1fr; }
+    .calendar-grid { overflow-x: auto; }
+    .cal-header, .cal-row { min-width: 560px; }
+    .send-quote-bar { padding: 12px 16px; flex-direction: column; gap: 10px; }
+    .topbar-actions .btn:not(.btn-primary) { display: none; }
+    .resource-grid { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 480px) {
+    .grid-3 { grid-template-columns: 1fr; }
+    .grid-4 { grid-template-columns: 1fr; }
+    .resource-grid { grid-template-columns: 1fr; }
+    .filter-bar { gap: 6px; }
+    .filter-chip { padding: 5px 10px; font-size: 12px; }
+    .topbar-title { font-size: 16px; }
+    .inquiry-actions { flex-direction: row; }
+  }
 </style>
 </head>
 <body>
-<div class="shell">
+<div class="shell" style="display:block;">
+
+<!-- SIDEBAR OVERLAY (mobile) -->
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="closeMobileSidebar()"></div>
 
 <!-- SIDEBAR -->
-<aside class="sidebar">
-  <div class="sidebar-logo">
-    <div class="logo-platform">殯殯有禮 業者後台</div>
-    <div class="logo-name">永安禮儀</div>
-    <span class="logo-tag">已驗證業者</span>
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-logo-wrap">
+    <div class="sidebar-logo-text">
+      <div class="logo-platform">殯殯有禮 業者後台</div>
+      <div class="logo-name">永安禮儀</div>
+      <span class="logo-tag">已驗證業者</span>
+    </div>
+    <button class="sidebar-toggle" id="sidebarToggle" onclick="toggleSidebar()" title="收合選單" aria-label="收合側邊欄">
+      <svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6">
+        <path d="M4 6h12M4 10h12M4 14h12"/>
+      </svg>
+    </button>
   </div>
   <div class="sidebar-vendor">
     <div class="sidebar-vendor-name">陳大年 禮儀師</div>
@@ -281,32 +381,32 @@
       <svg class="nav-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.4">
         <rect x="3" y="3" width="14" height="14" rx="2"/><path d="M7 7h6M7 10h6M7 13h4"/>
       </svg>
-      店家頁管理
+      <span class="nav-label">店家頁管理</span>
     </div>
     <div class="nav-item" onclick="showPage('p2', this)">
       <svg class="nav-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.4">
         <path d="M2 6h16M2 10h16M2 14h16M5 3v14M15 3v14" stroke-width="1.2"/>
       </svg>
-      名單與詢價中心
+      <span class="nav-label">名單與詢價中心</span>
       <span class="nav-badge">4</span>
     </div>
     <div class="nav-item" onclick="showPage('p3', this)">
       <svg class="nav-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.4">
         <path d="M4 14l4-4 3 3 5-6"/><rect x="2" y="2" width="16" height="16" rx="2"/>
       </svg>
-      報價與回覆工具
+      <span class="nav-label">報價與回覆工具</span>
     </div>
     <div class="nav-item" onclick="showPage('p4', this)">
       <svg class="nav-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.4">
         <rect x="3" y="4" width="14" height="14" rx="2"/><path d="M7 2v4M13 2v4M3 10h14"/>
       </svg>
-      排程與執行管理
+      <span class="nav-label">排程與執行管理</span>
     </div>
     <div class="nav-item" onclick="showPage('p5', this)">
       <svg class="nav-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.4">
         <circle cx="10" cy="10" r="7"/><path d="M10 6v4l3 2"/>
       </svg>
-      成效分析
+      <span class="nav-label">成效分析</span>
     </div>
   </nav>
   <div class="sidebar-footer">版本 1.0 · 殯殯有禮平台</div>
@@ -320,11 +420,22 @@
 ══════════════════════════════════════ -->
 <div id="p1" class="page active">
   <div class="topbar">
-    <div>
-      <div class="topbar-title">店家頁管理</div>
-      <div class="topbar-sub">管理您在平台上的公開頁面，完整度影響搜尋排序</div>
+    <div style="display:flex;align-items:center;gap:0;">
+      <button class="topbar-burger" onclick="openMobileSidebar()" aria-label="開啟選單">
+        <svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.7">
+          <path d="M3 6h16M3 11h16M3 16h16"/>
+        </svg>
+      </button>
+      <div>
+        <div class="topbar-title">店家頁管理</div>
+        <div class="topbar-sub">管理您在平台上的公開頁面，完整度影響搜尋排序</div>
+      </div>
     </div>
     <div class="topbar-actions">
+      <a href="index.html" class="page-switch-btn">
+        <svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="10" cy="10" r="8"/><path d="M10 6v4l3 2"/></svg>
+        用戶端
+      </a>
       <button class="btn btn-sm" onclick="previewPage()">預覽頁面</button>
       <button class="btn btn-primary btn-sm" onclick="savePage()">儲存變更</button>
     </div>
@@ -437,7 +548,7 @@
         <!-- 契約範本 -->
         <div class="card">
           <div class="card-title">契約範本</div>
-          <div class="card-sub">上傳後顯示驗證標章，提升家屬信任</div>
+          <div class="card-sub">上傳後顯示驗證���章，提升家屬信任</div>
           <div class="upload-zone" onclick="alert('功能示範：選擇 PDF 上傳')">
             <div class="upload-zone-icon">
               <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="var(--primary)" stroke-width="1.5"><path d="M10 4v8M7 9l3-5 3 5"/><path d="M4 14v2a1 1 0 001 1h10a1 1 0 001-1v-2"/></svg>
@@ -479,9 +590,14 @@
 ══════════════════════════════════════ -->
 <div id="p2" class="page">
   <div class="topbar">
-    <div>
-      <div class="topbar-title">名單與詢價中心</div>
-      <div class="topbar-sub">平台導入的諮詢單，依緊急度與狀態排序</div>
+    <div style="display:flex;align-items:center;gap:0;">
+      <button class="topbar-burger" onclick="openMobileSidebar()" aria-label="開啟選單">
+        <svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M3 6h16M3 11h16M3 16h16"/></svg>
+      </button>
+      <div>
+        <div class="topbar-title">名單與詢價中心</div>
+        <div class="topbar-sub">平台導入的諮詢單，依緊急度與狀態排序</div>
+      </div>
     </div>
     <div class="topbar-actions">
       <button class="btn btn-sm" onclick="exportInquiries()">匯出名單</button>
@@ -511,9 +627,14 @@
 ══════════════════════════════════════ -->
 <div id="p3" class="page">
   <div class="topbar">
-    <div>
-      <div class="topbar-title">報價與回覆工具</div>
-      <div class="topbar-sub">在標準模板上調整，標示可替代項目後回傳正式方案</div>
+    <div style="display:flex;align-items:center;gap:0;">
+      <button class="topbar-burger" onclick="openMobileSidebar()" aria-label="開啟選單">
+        <svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M3 6h16M3 11h16M3 16h16"/></svg>
+      </button>
+      <div>
+        <div class="topbar-title">報價與回覆工具</div>
+        <div class="topbar-sub">在標準模板上調整，標示可替代項目後回傳正式方案</div>
+      </div>
     </div>
     <div class="topbar-actions">
       <button class="btn btn-sm" onclick="previewQuote()">預覽報價單</button>
@@ -592,9 +713,14 @@
 ══════════════════════════════════════ -->
 <div id="p4" class="page">
   <div class="topbar">
-    <div>
-      <div class="topbar-title">排程與執行管理</div>
-      <div class="topbar-sub">管理禮儀師、車輛、禮廳與火化時段</div>
+    <div style="display:flex;align-items:center;gap:0;">
+      <button class="topbar-burger" onclick="openMobileSidebar()" aria-label="開啟選單">
+        <svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M3 6h16M3 11h16M3 16h16"/></svg>
+      </button>
+      <div>
+        <div class="topbar-title">排程與執行管理</div>
+        <div class="topbar-sub">管理禮儀師、車輛、禮廳與火化時段</div>
+      </div>
     </div>
     <div class="topbar-actions">
       <button class="btn btn-sm" onclick="addScheduleEvent()">＋ 新增排程</button>
@@ -646,9 +772,14 @@
 ══════════════════════════════════════ -->
 <div id="p5" class="page">
   <div class="topbar">
-    <div>
-      <div class="topbar-title">成效分析</div>
-      <div class="topbar-sub">曝光到成交的完整漏斗，加上評分與競品比較</div>
+    <div style="display:flex;align-items:center;gap:0;">
+      <button class="topbar-burger" onclick="openMobileSidebar()" aria-label="開啟選單">
+        <svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M3 6h16M3 11h16M3 16h16"/></svg>
+      </button>
+      <div>
+        <div class="topbar-title">成效分析</div>
+        <div class="topbar-sub">曝光到成交的完整漏斗，加上評分與競品比較</div>
+      </div>
     </div>
     <div class="topbar-actions">
       <select class="select" style="font-size:13px;padding:6px 28px 6px 12px;" onchange="updateAnalytics(this.value)">
@@ -694,6 +825,22 @@
 </div><!-- .shell -->
 
 <script>
+// ── Sidebar toggle ──────────────────────────
+function toggleSidebar() {
+  const sidebar = document.getElementById('sidebar');
+  const main = document.getElementById('mainArea');
+  const isCollapsed = sidebar.classList.toggle('collapsed');
+  main.classList.toggle('sidebar-collapsed', isCollapsed);
+}
+function openMobileSidebar() {
+  document.getElementById('sidebar').classList.add('mobile-open');
+  document.getElementById('sidebarOverlay').classList.add('visible');
+}
+function closeMobileSidebar() {
+  document.getElementById('sidebar').classList.remove('mobile-open');
+  document.getElementById('sidebarOverlay').classList.remove('visible');
+}
+
 // ── Navigation ──────────────────────────────
 function showPage(id, navEl) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
@@ -701,6 +848,7 @@ function showPage(id, navEl) {
   document.getElementById(id).classList.add('active');
   if (navEl) navEl.classList.add('active');
   document.getElementById('mainArea').scrollTop = 0;
+  closeMobileSidebar();
 }
 
 // ── PAGE 1: Store Management ─────────────────
@@ -749,7 +897,7 @@ function savePage() {
   setTimeout(() => { btn.textContent = '已儲存 ✓'; setTimeout(() => { btn.textContent = '儲存變更'; btn.disabled = false; }, 1500); }, 800);
 }
 
-// ── PAGE 2: Inquiry Center ───────────────────
+// ── PAGE 2: Inquiry Center ─────────────────���─
 const inquiries = [
   { id:'INQ-0046', name:'陳小明 先生', situation:'家人剛過世', budget:'NT$ 60,000–90,000', region:'台北市大安區', religion:'道教', status:'urgent', note:'接體後需在 12 小時內安排冰存，家屬要求 24 小時出現在場', time:'30 分鐘前', tags:['緊急','道教','接體'] },
   { id:'INQ-0045', name:'王明德 先生', situation:'已決定火化', budget:'NT$ 80,000–120,000', region:'台北市中山區', religion:'佛教', status:'pending', note:'需要完整告別式，家屬約 30 人，希望預算透明', time:'2 小時前', tags:['待報價','佛教','告別式'] },
