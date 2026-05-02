@@ -1,3 +1,5 @@
+'use client'
+
 import { TrendingUp, ArrowDownLeft, Clock } from 'lucide-react'
 import { VENDOR_CASES, MONTHLY_DATA } from '@/lib/data'
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts'
@@ -43,11 +45,11 @@ export default function VendorFinancePage() {
         <p className="text-sm font-semibold mb-4">近期月收入趨勢（萬元）</p>
         <ResponsiveContainer width="100%" height={200}>
           <BarChart data={chartData} barSize={32}>
-            <CartesianGrid strokeDasharray="3 3" stroke="oklch(0.88 0.01 75)" />
+            <CartesianGrid strokeDasharray="3 3" stroke="oklch(0.870 0.015 248)" />
             <XAxis dataKey="month" tick={{ fontSize: 12 }} />
             <YAxis tick={{ fontSize: 12 }} />
             <Tooltip formatter={(v: number) => [`NT$${v}萬`, '收入']} />
-            <Bar dataKey="amount" fill="oklch(0.62 0.06 145)" radius={[4, 4, 0, 0]} />
+            <Bar dataKey="amount" fill="oklch(0.475 0.090 230)" radius={[4, 4, 0, 0]} />
           </BarChart>
         </ResponsiveContainer>
       </div>
