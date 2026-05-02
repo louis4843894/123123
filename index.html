@@ -163,12 +163,12 @@
 
   /* Page switch button */
   .page-switch-btn {
-    display: inline-flex; align-items: center; gap: 7px;
-    padding: 7px 16px; border-radius: 8px;
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 30px; height: 30px; border-radius: 7px;
     border: 1px solid var(--border); background: var(--surface);
-    color: var(--text-2); cursor: pointer;
-    font-size: 13px; font-family: 'Noto Sans TC', sans-serif;
+    color: var(--text-3); cursor: pointer;
     text-decoration: none; transition: all 0.18s;
+    flex-shrink: 0;
   }
   .page-switch-btn:hover { border-color: var(--primary-light); color: var(--primary); background: var(--primary-pale); }
   .topbar-title {
@@ -817,12 +817,13 @@
           <div class="topbar-sub">請先告訴我們，您目前的情況是？</div>
         </div>
       </div>
-      <div class="topbar-actions">
-        <a href="admin.html" class="page-switch-btn">
-          <svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="14" height="14" rx="2"/><path d="M7 7h6M7 10h6M7 13h4"/></svg>
-          業者後台
+      <div style="display:flex;align-items:center;gap:10px;">
+        <a href="admin.html" class="page-switch-btn" title="切換至業者後台">
+          <svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="14" height="14" rx="2"/><path d="M7 7h6M7 10h6M7 13h4"/></svg>
         </a>
-        <button class="btn btn-sm">需要協助？</button>
+        <div class="topbar-actions">
+          <button class="btn btn-sm">需要協助？</button>
+        </div>
       </div>
     </div>
     <div style="padding:32px 36px;">
@@ -1068,7 +1069,7 @@
               <input class="input" id="newItemPrice" type="number" placeholder="金額（NT$）" style="width:100%;">
               <select class="select" id="newItemType" style="width:100%;">
                 <option value="optional">可選加購</option>
-                <option value="required">必要費用</option>
+                <option value="required">���要費用</option>
                 <option value="extra">常見額外</option>
               </select>
               <div style="display:flex;gap:8px;">
@@ -1154,7 +1155,7 @@
         <select class="select" style="font-size:13px;padding:5px 32px 5px 12px;">
           <option>自然排序：透明度優先（推薦）</option>
           <option>自然排序：評價品質</option>
-          <option>自然排序：回覆速度</option>
+          <option>自���排序：回覆速度</option>
           <option>自然排序：資料完整度</option>
           <option>總價由低至高</option>
         </select>
@@ -1198,7 +1199,7 @@
                 <td class="compare-highlight"><span class="check-icon">✓</span></td>
               </tr>
               <tr>
-                <td class="feature-col">冰存（3日）</td>
+                <td class="feature-col">冰存（3日��</td>
                 <td class="compare-highlight">NT$ 8,000</td>
                 <td>NT$ 6,000</td>
                 <td class="compare-highlight">NT$ 9,000</td>
@@ -1644,7 +1645,7 @@
               <input type="checkbox" id="v3" style="accent-color:var(--primary);">
               <div>
                 <div class="verify-option-title">✓ 契約已審閱</div>
-                <div class="verify-option-desc">服務契約已簽署並經平台核對</div>
+                <div class="verify-option-desc">服務��約已簽署並經平台核對</div>
               </div>
             </label>
 
@@ -1898,7 +1899,7 @@
               <div class="kb-subsidy-item">
                 <div class="kb-subsidy-name">國民年金喪葬給付</div>
                 <div class="kb-subsidy-amt">NT$ 45,800 起</div>
-                <div class="kb-subsidy-note">被保險人身故，家屬可申請，期限：2年</div>
+                <div class="kb-subsidy-note">被保險���身故，家屬可申請，期限：2年</div>
               </div>
               <div class="kb-subsidy-item">
                 <div class="kb-subsidy-name">公教人員保險</div>

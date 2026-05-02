@@ -118,12 +118,12 @@
 
   /* Page switch button */
   .page-switch-btn {
-    display: inline-flex; align-items: center; gap: 7px;
-    padding: 7px 16px; border-radius: 8px;
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 30px; height: 30px; border-radius: 7px;
     border: 1px solid var(--border); background: var(--surface);
-    color: var(--text-2); cursor: pointer;
-    font-size: 13px; font-family: 'Noto Sans TC', sans-serif;
+    color: var(--text-3); cursor: pointer;
     text-decoration: none; transition: all 0.18s;
+    flex-shrink: 0;
   }
   .page-switch-btn:hover { border-color: var(--primary-light); color: var(--primary); background: var(--primary-pale); }
   .topbar-title { font-family: 'Noto Serif TC', serif; font-size: 18px; font-weight: 400; color: var(--text); }
@@ -431,13 +431,14 @@
         <div class="topbar-sub">管理您在平台上的公開頁面，完整度影響搜尋排序</div>
       </div>
     </div>
-    <div class="topbar-actions">
-      <a href="index.html" class="page-switch-btn">
-        <svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="10" cy="10" r="8"/><path d="M10 6v4l3 2"/></svg>
-        用戶端
+    <div style="display:flex;align-items:center;gap:10px;">
+      <a href="index.html" class="page-switch-btn" title="切換至用戶端">
+        <svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="10" cy="10" r="8"/><path d="M10 6v4l3 2"/></svg>
       </a>
-      <button class="btn btn-sm" onclick="previewPage()">預覽頁面</button>
-      <button class="btn btn-primary btn-sm" onclick="savePage()">儲存變更</button>
+      <div class="topbar-actions">
+        <button class="btn btn-sm" onclick="previewPage()">預覽頁面</button>
+        <button class="btn btn-primary btn-sm" onclick="savePage()">儲存變更</button>
+      </div>
     </div>
   </div>
   <div style="padding:32px 36px;">
@@ -462,11 +463,11 @@
           <div class="card-sub">顯示於店家頁頂部，建議 80–150 字</div>
           <div class="field">
             <div class="label">品牌名稱</div>
-            <input class="input" style="width:100%;" value="永安禮儀有限公司">
+            <input class="input" style="width:100%;" value="永���禮儀有限公司">
           </div>
           <div class="field" style="margin-top:12px;">
             <div class="label">服務簡介</div>
-            <textarea class="textarea" style="width:100%;" rows="4">永安禮儀自 2005 年成立，深耕台北、新北、基隆三地，秉持「尊重、陪伴、透明」三大原則，協助超過 3,000 個家庭走過最困難的時刻。全程由專屬禮儀師負責，不外包，不隱藏費用。</textarea>
+            <textarea class="textarea" style="width:100%;" rows="4">永安禮儀自 2005 年成立，深耕台北、新北、基隆三地，秉持「尊重、陪伴、透明」三大原則，協助超過 3,000 個家庭走過最困難的時��。全程由專屬禮儀師負責，不外包，不隱藏費用。</textarea>
           </div>
           <div class="field" style="margin-top:12px;">
             <div class="label">聯絡電話（24H）</div>
@@ -899,7 +900,7 @@ function savePage() {
 
 // ── PAGE 2: Inquiry Center ─────────────────���─
 const inquiries = [
-  { id:'INQ-0046', name:'陳小明 先生', situation:'家人剛過世', budget:'NT$ 60,000–90,000', region:'台北市大安區', religion:'道教', status:'urgent', note:'接體後需在 12 小時內安排冰存，家屬要求 24 小時出現在場', time:'30 分鐘前', tags:['緊急','道教','接體'] },
+  { id:'INQ-0046', name:'陳小明 先生', situation:'家人剛過世', budget:'NT$ 60,000–90,000', region:'台北市大安區', religion:'道教', status:'urgent', note:'接體後需在 12 ��時內安排冰存，家屬要求 24 小時出現在場', time:'30 分鐘前', tags:['緊急','道教','接體'] },
   { id:'INQ-0045', name:'王明德 先生', situation:'已決定火化', budget:'NT$ 80,000–120,000', region:'台北市中山區', religion:'佛教', status:'pending', note:'需要完整告別式，家屬約 30 人，希望預算透明', time:'2 小時前', tags:['待報價','佛教','告別式'] },
   { id:'INQ-0044', name:'李雅婷 女士', situation:'預立規劃', budget:'NT$ 40,000–60,000', region:'新北市板橋區', religion:'無宗教', status:'quoted', note:'先生有慢性病，希望提前了解各選項，不急', time:'昨天 15:30', tags:['預立','無宗教','塔位'] },
   { id:'INQ-0043', name:'張家輝 先生', situation:'已決定火化', budget:'NT$ 70,000–100,000', region:'新北市新莊區', religion:'佛教', status:'quoted', note:'比較過三家業者，對我們的評價感興趣，需要詳細報價', time:'昨天 10:00', tags:['比較中','佛教','火化'] },
