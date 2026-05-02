@@ -1,0 +1,1402 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>靜途 — 數位後事服務平台</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@300;400;500&family=Noto+Sans+TC:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #EDF2F7;
+    --surface: #FFFFFF;
+    --surface-2: #F7FAFC;
+    --primary: #4A6B8A;
+    --primary-dark: #2C4E6E;
+    --primary-light: #7AA2C0;
+    --primary-pale: #D6E6F2;
+    --accent: #3A7CA5;
+    --text: #1A2E42;
+    --text-2: #4A6680;
+    --text-3: #7A9AB2;
+    --border: #CCDDE8;
+    --border-light: #E2EEF5;
+    --danger: #C0392B;
+    --success: #2E7D62;
+    --warning: #B5830A;
+    --tag-bg: #E4F0F8;
+    --shadow: 0 1px 4px rgba(42,80,110,0.10);
+    --shadow-md: 0 4px 16px rgba(42,80,110,0.12);
+    --radius: 10px;
+    --radius-lg: 16px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Noto Sans TC', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    font-size: 15px;
+    line-height: 1.65;
+  }
+  a { color: var(--accent); text-decoration: none; }
+
+  /* Layout */
+  .shell { display: flex; min-height: 100vh; }
+  .sidebar {
+    width: 220px; min-width: 220px;
+    background: var(--primary-dark);
+    display: flex; flex-direction: column;
+    padding: 0;
+    position: sticky; top: 0; height: 100vh;
+    overflow-y: auto;
+  }
+  .sidebar-logo {
+    padding: 28px 24px 20px;
+    border-bottom: 1px solid rgba(255,255,255,0.10);
+  }
+  .sidebar-logo .logo-name {
+    font-family: 'Noto Serif TC', serif;
+    font-size: 22px; font-weight: 500;
+    color: #FFFFFF; letter-spacing: 0.05em;
+  }
+  .sidebar-logo .logo-sub {
+    font-size: 11px; color: rgba(255,255,255,0.45);
+    margin-top: 3px; letter-spacing: 0.08em;
+  }
+  .sidebar-nav { flex: 1; padding: 16px 0; }
+  .nav-item {
+    display: flex; align-items: center; gap: 11px;
+    padding: 11px 20px;
+    color: rgba(255,255,255,0.65);
+    cursor: pointer;
+    border-left: 3px solid transparent;
+    transition: all 0.2s;
+    font-size: 13.5px;
+    user-select: none;
+  }
+  .nav-item:hover { color: rgba(255,255,255,0.90); background: rgba(255,255,255,0.06); }
+  .nav-item.active {
+    color: #FFFFFF;
+    background: rgba(255,255,255,0.10);
+    border-left-color: var(--primary-light);
+  }
+  .nav-icon { width: 18px; height: 18px; opacity: 0.85; flex-shrink: 0; }
+  .nav-badge {
+    margin-left: auto;
+    background: var(--primary-light);
+    color: white;
+    font-size: 11px;
+    padding: 1px 7px;
+    border-radius: 20px;
+  }
+  .sidebar-footer {
+    padding: 16px 20px;
+    border-top: 1px solid rgba(255,255,255,0.10);
+    font-size: 12px;
+    color: rgba(255,255,255,0.35);
+  }
+
+  /* Main */
+  .main { flex: 1; overflow-y: auto; min-width: 0; }
+  .topbar {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 16px 36px;
+    display: flex; align-items: center; justify-content: space-between;
+    position: sticky; top: 0; z-index: 10;
+  }
+  .topbar-title {
+    font-family: 'Noto Serif TC', serif;
+    font-size: 18px; font-weight: 400; color: var(--text);
+  }
+  .topbar-sub { font-size: 13px; color: var(--text-3); margin-top: 1px; }
+  .topbar-actions { display: flex; gap: 10px; align-items: center; }
+  .btn {
+    padding: 8px 18px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text-2);
+    cursor: pointer;
+    font-size: 13.5px;
+    font-family: 'Noto Sans TC', sans-serif;
+    transition: all 0.18s;
+  }
+  .btn:hover { border-color: var(--primary-light); color: var(--primary); background: var(--primary-pale); }
+  .btn-primary {
+    background: var(--primary);
+    color: white;
+    border-color: var(--primary);
+  }
+  .btn-primary:hover { background: var(--primary-dark); border-color: var(--primary-dark); color: white; }
+  .btn-sm { padding: 5px 12px; font-size: 12.5px; }
+
+  .page { padding: 32px 36px; display: none; }
+  .page.active { display: block; }
+
+  /* Cards & sections */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow);
+    padding: 24px 28px;
+    margin-bottom: 20px;
+  }
+  .card-title {
+    font-family: 'Noto Serif TC', serif;
+    font-size: 16px; font-weight: 400;
+    color: var(--text); margin-bottom: 4px;
+  }
+  .card-sub { font-size: 13px; color: var(--text-3); margin-bottom: 18px; }
+  .section-title {
+    font-family: 'Noto Serif TC', serif;
+    font-size: 22px; font-weight: 300;
+    color: var(--text); margin-bottom: 6px;
+  }
+  .section-sub { font-size: 14px; color: var(--text-2); margin-bottom: 28px; }
+
+  /* MODULE 1: 情境入口 */
+  .situation-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px; margin-bottom: 28px;
+  }
+  .situation-card {
+    background: var(--surface);
+    border: 2px solid var(--border-light);
+    border-radius: var(--radius-lg);
+    padding: 28px 24px 24px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex; flex-direction: column;
+  }
+  .situation-card:hover { border-color: var(--primary-light); box-shadow: var(--shadow-md); transform: translateY(-2px); }
+  .situation-card.selected { border-color: var(--primary); background: var(--primary-pale); }
+  .situation-icon {
+    width: 44px; height: 44px;
+    background: var(--primary-pale);
+    border-radius: 12px;
+    margin-bottom: 14px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .situation-card.selected .situation-icon { background: rgba(74,107,138,0.20); }
+  .situation-label {
+    font-family: 'Noto Serif TC', serif;
+    font-size: 17px; font-weight: 400; color: var(--text);
+    margin-bottom: 7px;
+  }
+  .situation-desc { font-size: 13px; color: var(--text-2); line-height: 1.6; }
+  .urgency-badge {
+    margin-top: 14px; align-self: flex-start;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 11.5px;
+  }
+  .urgency-high { background: #FEE8E5; color: #B03A2E; }
+  .urgency-plan { background: #E5F0F8; color: #2C4E6E; }
+
+  /* MODULE 2: 方案建構器 */
+  .service-category { margin-bottom: 28px; }
+  .category-header {
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 12px;
+  }
+  .category-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%; background: var(--primary);
+  }
+  .category-name {
+    font-size: 13px; font-weight: 500;
+    color: var(--text-2); letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+  .service-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .service-item {
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+    cursor: pointer;
+    transition: all 0.18s;
+    background: var(--surface);
+    display: flex; flex-direction: column; gap: 6px;
+  }
+  .service-item:hover { border-color: var(--primary-light); background: var(--surface-2); }
+  .service-item.checked { border-color: var(--primary); background: var(--primary-pale); }
+  .service-item-top { display: flex; align-items: center; justify-content: space-between; }
+  .service-name { font-size: 14px; color: var(--text); }
+  .service-price { font-size: 13px; color: var(--primary); font-weight: 500; }
+  .service-note { font-size: 12px; color: var(--text-3); }
+  .check-circle {
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    border: 1.5px solid var(--border);
+    background: var(--surface);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    transition: all 0.18s;
+  }
+  .service-item.checked .check-circle {
+    border-color: var(--primary);
+    background: var(--primary);
+  }
+  .tag { display: inline-block; padding: 2px 8px; border-radius: 20px; font-size: 11px; }
+  .tag-required { background: #FEF0E6; color: #9B5A1A; }
+  .tag-optional { background: var(--tag-bg); color: var(--primary); }
+  .tag-extra { background: #E8EEF3; color: var(--text-2); }
+
+  /* MODULE 3: 總價試算器 */
+  .price-breakdown { margin-bottom: 24px; }
+  .price-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border-light);
+    font-size: 14px;
+  }
+  .price-row:last-child { border-bottom: none; }
+  .price-row-name { color: var(--text-2); display: flex; align-items: center; gap: 8px; }
+  .price-row-amt { color: var(--text); font-weight: 500; }
+  .price-row-remove { cursor: pointer; color: var(--text-3); font-size: 16px; line-height: 1; transition: color 0.15s; }
+  .price-row-remove:hover { color: var(--danger); }
+  .price-total-box {
+    background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%);
+    border-radius: var(--radius-lg);
+    padding: 24px 28px;
+    display: flex; align-items: center; justify-content: space-between;
+    margin-top: 4px;
+  }
+  .price-total-label { color: rgba(255,255,255,0.75); font-size: 14px; }
+  .price-total-num { font-family: 'Noto Serif TC', serif; font-size: 32px; font-weight: 300; color: white; }
+  .price-total-unit { font-size: 14px; color: rgba(255,255,255,0.65); margin-top: 4px; }
+  .price-type-legend {
+    display: flex; gap: 16px;
+    margin-bottom: 16px; flex-wrap: wrap;
+  }
+  .price-type-item { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--text-2); }
+  .price-type-dot { width: 8px; height: 8px; border-radius: 50%; }
+
+  /* MODULE 4: 比較頁 */
+  .compare-table-wrapper { overflow-x: auto; }
+  .compare-table {
+    width: 100%; border-collapse: collapse;
+    font-size: 13.5px;
+  }
+  .compare-table th {
+    padding: 14px 16px;
+    text-align: center;
+    border-bottom: 2px solid var(--border);
+    color: var(--text-2); font-weight: 500;
+    background: var(--surface-2);
+  }
+  .compare-table th.feature-col { text-align: left; }
+  .compare-table td {
+    padding: 13px 16px;
+    border-bottom: 1px solid var(--border-light);
+    text-align: center; color: var(--text-2);
+  }
+  .compare-table td.feature-col { text-align: left; color: var(--text-3); font-size: 13px; }
+  .compare-table tr:hover td { background: var(--surface-2); }
+  .compare-highlight { background: var(--primary-pale) !important; }
+  .compare-name { font-family: 'Noto Serif TC', serif; font-size: 16px; color: var(--text); }
+  .compare-price { font-size: 19px; font-weight: 500; color: var(--primary); margin: 4px 0; }
+  .compare-badge {
+    display: inline-block; padding: 3px 10px;
+    border-radius: 20px; font-size: 11.5px;
+    background: var(--primary); color: white;
+  }
+  .check-icon { color: var(--success); font-weight: 600; font-size: 16px; }
+  .cross-icon { color: var(--border); font-size: 16px; }
+  .star-row { color: #D4A017; font-size: 13px; letter-spacing: -1px; }
+  .rating-num { color: var(--text-2); font-size: 12px; }
+  .filter-bar { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+  .filter-chip {
+    padding: 6px 14px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    font-size: 13px;
+    color: var(--text-2);
+    cursor: pointer;
+    transition: all 0.18s;
+  }
+  .filter-chip:hover, .filter-chip.active { border-color: var(--primary); background: var(--primary-pale); color: var(--primary); }
+
+  /* MODULE 5: 家庭共決空間 */
+  .family-plan-card {
+    background: var(--primary-pale);
+    border: 1px solid var(--primary-light);
+    border-radius: var(--radius-lg);
+    padding: 20px 24px;
+    margin-bottom: 20px;
+    display: flex; align-items: flex-start; justify-content: space-between; gap: 20px;
+  }
+  .family-plan-info { flex: 1; }
+  .family-plan-name { font-family: 'Noto Serif TC', serif; font-size: 17px; margin-bottom: 6px; }
+  .family-plan-price { font-size: 22px; font-weight: 500; color: var(--primary); margin-bottom: 10px; }
+  .family-members { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 16px; }
+  .member-avatar {
+    width: 34px; height: 34px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 500; color: white;
+  }
+  .vote-section { margin-top: 12px; }
+  .vote-bar-wrap { background: var(--border-light); border-radius: 20px; height: 8px; overflow: hidden; margin: 8px 0; }
+  .vote-bar-fill { height: 100%; background: var(--primary); border-radius: 20px; transition: width 0.4s; }
+  .vote-label { font-size: 12.5px; color: var(--text-2); display: flex; justify-content: space-between; }
+  .vote-btns { display: flex; gap: 8px; margin-top: 14px; }
+  .vote-btn { padding: 7px 16px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); font-size: 13px; color: var(--text-2); cursor: pointer; transition: all 0.18s; font-family: 'Noto Sans TC', sans-serif; }
+  .vote-btn:hover { background: var(--surface-2); }
+  .vote-btn.agree { border-color: var(--success); color: var(--success); }
+  .vote-btn.agree:hover { background: #EAF5EE; }
+  .vote-btn.disagree { border-color: var(--danger); color: var(--danger); }
+  .vote-btn.disagree:hover { background: #FEF0EF; }
+  .comments-section { margin-top: 6px; }
+  .comment-item {
+    display: flex; gap: 12px;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--border-light);
+  }
+  .comment-item:last-child { border-bottom: none; }
+  .comment-avatar { width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 12px; color: white; font-weight: 500; }
+  .comment-body { flex: 1; }
+  .comment-meta { font-size: 12px; color: var(--text-3); margin-bottom: 4px; }
+  .comment-text { font-size: 13.5px; color: var(--text); line-height: 1.6; }
+  .comment-input-row { display: flex; gap: 10px; margin-top: 16px; align-items: flex-end; }
+  .comment-input {
+    flex: 1; padding: 10px 14px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    font-size: 14px; font-family: 'Noto Sans TC', sans-serif;
+    background: var(--surface); color: var(--text);
+    resize: none; outline: none;
+    transition: border-color 0.18s;
+    line-height: 1.5;
+  }
+  .comment-input:focus { border-color: var(--primary-light); }
+  .budget-split {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 12px; margin-top: 16px;
+  }
+  .budget-split-item {
+    background: var(--surface);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+    text-align: center;
+  }
+  .budget-split-name { font-size: 13px; color: var(--text-3); margin-bottom: 4px; }
+  .budget-split-amt { font-size: 18px; font-weight: 500; color: var(--text); }
+  .budget-split-pct { font-size: 12px; color: var(--text-3); margin-top: 2px; }
+
+  /* MODULE 6: 案件進度追蹤 */
+  .progress-header {
+    background: var(--surface);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-lg);
+    padding: 20px 24px;
+    margin-bottom: 20px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .case-id { font-size: 12px; color: var(--text-3); margin-bottom: 4px; letter-spacing: 0.06em; }
+  .case-name { font-family: 'Noto Serif TC', serif; font-size: 18px; font-weight: 400; margin-bottom: 2px; }
+  .case-status {
+    padding: 6px 14px; border-radius: 20px;
+    font-size: 13px; font-weight: 500;
+    background: #E3F4EC; color: #2E7D62;
+  }
+  .timeline { position: relative; padding-left: 28px; }
+  .timeline::before {
+    content: '';
+    position: absolute; left: 9px; top: 8px; bottom: 8px;
+    width: 2px; background: var(--border);
+  }
+  .timeline-item { position: relative; margin-bottom: 28px; }
+  .timeline-dot {
+    position: absolute; left: -28px; top: 3px;
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    border: 2px solid var(--border);
+    background: var(--surface);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .timeline-dot.done { background: var(--primary); border-color: var(--primary); }
+  .timeline-dot.active { background: var(--surface); border-color: var(--primary); box-shadow: 0 0 0 4px var(--primary-pale); }
+  .timeline-dot.pending { background: var(--surface-2); border-color: var(--border); }
+  .timeline-card {
+    background: var(--surface);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius);
+    padding: 16px 20px;
+    transition: all 0.18s;
+  }
+  .timeline-item.active .timeline-card { border-color: var(--primary-light); background: var(--primary-pale); }
+  .timeline-card-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
+  .timeline-label { font-size: 15px; font-weight: 500; color: var(--text); }
+  .timeline-date { font-size: 12px; color: var(--text-3); }
+  .timeline-detail { font-size: 13px; color: var(--text-2); line-height: 1.6; }
+  .timeline-actions { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
+  .progress-bar-outer {
+    background: var(--border-light);
+    border-radius: 20px; height: 6px; margin-bottom: 8px; overflow: hidden;
+  }
+  .progress-bar-inner { height: 100%; background: var(--primary); border-radius: 20px; transition: width 0.5s; }
+  .progress-pct { font-size: 13px; color: var(--text-3); }
+  .notif-list { display: flex; flex-direction: column; gap: 10px; }
+  .notif-item {
+    background: var(--surface);
+    border: 1px solid var(--border-light);
+    border-left: 3px solid var(--primary-light);
+    border-radius: var(--radius);
+    padding: 13px 16px;
+    display: flex; gap: 12px; align-items: flex-start;
+  }
+  .notif-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--primary); margin-top: 5px; flex-shrink: 0; }
+  .notif-text { font-size: 13.5px; color: var(--text-2); line-height: 1.55; }
+  .notif-time { font-size: 12px; color: var(--text-3); margin-top: 3px; }
+
+  /* Misc helpers */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .row { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+  .divider { border: none; border-top: 1px solid var(--border-light); margin: 16px 0; }
+  .input {
+    padding: 9px 13px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    font-size: 14px; font-family: 'Noto Sans TC', sans-serif;
+    background: var(--surface); color: var(--text); outline: none;
+    transition: border-color 0.18s;
+  }
+  .input:focus { border-color: var(--primary-light); }
+  .select {
+    padding: 9px 32px 9px 13px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    font-size: 14px; font-family: 'Noto Sans TC', sans-serif;
+    background: var(--surface); color: var(--text); outline: none;
+    appearance: none; cursor: pointer;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%234A6B8A' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-position: right 12px center;
+  }
+  .empty-state { text-align: center; padding: 40px; color: var(--text-3); font-size: 14px; }
+  .chip {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 3px 10px; border-radius: 20px;
+    font-size: 12px;
+    background: var(--tag-bg); color: var(--primary);
+  }
+
+  /* Summary bar for builder */
+  .sticky-summary {
+    position: sticky; bottom: 0;
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    padding: 14px 36px;
+    display: flex; align-items: center; justify-content: space-between;
+    z-index: 5;
+  }
+  .summary-items { font-size: 13.5px; color: var(--text-2); }
+  .summary-price { font-size: 20px; font-weight: 500; color: var(--primary); }
+</style>
+</head>
+<body>
+<div class="shell">
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-name">靜途</div>
+    <div class="logo-sub">JÌNG TÚ · 數位後事服務</div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-item active" onclick="showPage('p1', this)">
+      <svg class="nav-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.4">
+        <circle cx="10" cy="10" r="8"/><path d="M10 6v4l3 2"/>
+      </svg>
+      情境入口
+    </div>
+    <div class="nav-item" onclick="showPage('p2', this)">
+      <svg class="nav-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.4">
+        <rect x="3" y="3" width="6" height="6" rx="1.5"/><rect x="11" y="3" width="6" height="6" rx="1.5"/>
+        <rect x="3" y="11" width="6" height="6" rx="1.5"/><rect x="11" y="11" width="6" height="6" rx="1.5"/>
+      </svg>
+      方案建構器
+    </div>
+    <div class="nav-item" onclick="showPage('p3', this)">
+      <svg class="nav-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.4">
+        <path d="M4 14l4-4 3 3 5-6"/><rect x="2" y="2" width="16" height="16" rx="2"/>
+      </svg>
+      總價試算器
+    </div>
+    <div class="nav-item" onclick="showPage('p4', this)">
+      <svg class="nav-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.4">
+        <path d="M2 5h16M2 10h16M2 15h16M7 2v16M13 2v16" stroke-width="1.2"/>
+      </svg>
+      比較頁
+      <span class="nav-badge">3</span>
+    </div>
+    <div class="nav-item" onclick="showPage('p5', this)">
+      <svg class="nav-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.4">
+        <path d="M17 11a5 5 0 01-5 5H6l-3 3V6a5 5 0 015-5h4a5 5 0 015 5v5z"/>
+      </svg>
+      家庭共決空間
+    </div>
+    <div class="nav-item" onclick="showPage('p6', this)">
+      <svg class="nav-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.4">
+        <circle cx="10" cy="10" r="8"/><path d="M10 6v4l3 2"/>
+      </svg>
+      案件進度追蹤
+      <span class="nav-badge">進行中</span>
+    </div>
+  </nav>
+  <div class="sidebar-footer">版本 1.0 · 僅供展示</div>
+</aside>
+
+<!-- MAIN -->
+<div class="main" id="mainArea">
+
+  <!-- PAGE 1: 情境入口 -->
+  <div id="p1" class="page active">
+    <div class="topbar">
+      <div>
+        <div class="topbar-title">情境入口</div>
+        <div class="topbar-sub">請先告訴我們，您目前的情況是？</div>
+      </div>
+      <div class="topbar-actions">
+        <button class="btn btn-sm">需要協助？</button>
+      </div>
+    </div>
+    <div style="padding:32px 36px;">
+      <div class="section-title">現在的情況是什麼</div>
+      <div class="section-sub">選擇最符合您當下情境的選項，我們將引導您進入對應的流程，減少不必要的步驟。</div>
+
+      <div class="situation-grid" id="situationGrid">
+        <div class="situation-card" onclick="selectSituation(this, 'urgent')">
+          <div class="situation-icon">
+            <svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="#4A6B8A" stroke-width="1.6">
+              <path d="M11 3v10M11 17v2M3.5 8.5L11 3l7.5 5.5v8.5a1 1 0 01-1 1H4.5a1 1 0 01-1-1V8.5z"/>
+            </svg>
+          </div>
+          <div class="situation-label">家人剛剛過世</div>
+          <div class="situation-desc">需要緊急安排接體、冰存與後續服務，時間較為緊迫，需要立刻引導。</div>
+          <span class="urgency-badge urgency-high">緊急</span>
+        </div>
+        <div class="situation-card" onclick="selectSituation(this, 'plan')">
+          <div class="situation-icon">
+            <svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="#4A6B8A" stroke-width="1.6">
+              <rect x="3" y="4" width="16" height="16" rx="2"/><path d="M7 2v4M15 2v4M3 10h16"/>
+            </svg>
+          </div>
+          <div class="situation-label">預立規劃，尚未發生</div>
+          <div class="situation-desc">希望為自己或家人提前安排，了解選項與費用，做好準備。</div>
+          <span class="urgency-badge urgency-plan">預立規劃</span>
+        </div>
+        <div class="situation-card" onclick="selectSituation(this, 'fire')">
+          <div class="situation-icon">
+            <svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="#4A6B8A" stroke-width="1.6">
+              <path d="M11 20c-4 0-7-3-7-7 0-2.5 1.5-5 4-6.5 0 1.5 1 3 2 3.5 0-2 1.5-4.5 3-6 .5 2 1.5 3.5 3 4.5 1 1 2 2.5 2 4.5 0 4-3 7-7 7z"/>
+            </svg>
+          </div>
+          <div class="situation-label">已決定火化</div>
+          <div class="situation-desc">方向已確定為火化，需要找合適的業者、塔位或骨灰甕，安排後續程序。</div>
+          <span class="urgency-badge urgency-plan">已有方向</span>
+        </div>
+        <div class="situation-card" onclick="selectSituation(this, 'undecided')">
+          <div class="situation-icon">
+            <svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="#4A6B8A" stroke-width="1.6">
+              <circle cx="11" cy="11" r="8"/><path d="M8.5 8.5a2.8 2.8 0 015 1.8c0 2-3 2.5-3 4.7M11 17v.5"/>
+            </svg>
+          </div>
+          <div class="situation-label">還在評估，尚未決定</div>
+          <div class="situation-desc">對塔位、告別式形式、地點等尚未決定，需要先了解各種選項與費用差異。</div>
+          <span class="urgency-badge urgency-plan">資訊蒐集</span>
+        </div>
+      </div>
+
+      <div id="situationGuide" style="display:none;">
+        <div class="card" style="border-color:var(--primary-light); background:var(--primary-pale);">
+          <div class="card-title">建議流程</div>
+          <div class="card-sub" id="guideText"></div>
+          <div class="row">
+            <button class="btn btn-primary" id="guideCta" onclick=""></button>
+            <button class="btn" onclick="document.getElementById('situationGuide').style.display='none'">稍後再說</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid-2" style="margin-top:8px;">
+        <div class="card">
+          <div class="card-title">常見問題</div>
+          <div class="card-sub">快速找到您需要的答案</div>
+          <div style="display:flex;flex-direction:column;gap:8px;">
+            <div style="padding:10px 14px;background:var(--surface-2);border-radius:8px;font-size:13.5px;color:var(--text-2);cursor:pointer;" onmouseover="this.style.background='var(--primary-pale)'" onmouseout="this.style.background='var(--surface-2)'">接體通常要多久可以到？</div>
+            <div style="padding:10px 14px;background:var(--surface-2);border-radius:8px;font-size:13.5px;color:var(--text-2);cursor:pointer;" onmouseover="this.style.background='var(--primary-pale)'" onmouseout="this.style.background='var(--surface-2)'">火化與土葬費用差多少？</div>
+            <div style="padding:10px 14px;background:var(--surface-2);border-radius:8px;font-size:13.5px;color:var(--text-2);cursor:pointer;" onmouseover="this.style.background='var(--primary-pale)'" onmouseout="this.style.background='var(--surface-2)'">報價單要包含哪些項目？</div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">24 小時諮詢</div>
+          <div class="card-sub">隨時有人協助您</div>
+          <div style="display:flex;flex-direction:column;gap:12px;margin-top:4px;">
+            <div style="display:flex;align-items:center;gap:10px;">
+              <div style="width:36px;height:36px;background:var(--primary-pale);border-radius:8px;display:flex;align-items:center;justify-content:center;">
+                <svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="var(--primary)" stroke-width="1.5"><path d="M17 11a5 5 0 01-5 5H6l-3 3V6a5 5 0 015-5h4a5 5 0 015 5v5z"/></svg>
+              </div>
+              <div><div style="font-size:13.5px;color:var(--text)">線上文字諮詢</div><div style="font-size:12px;color:var(--text-3)">平均 3 分鐘回覆</div></div>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;">
+              <div style="width:36px;height:36px;background:var(--primary-pale);border-radius:8px;display:flex;align-items:center;justify-content:center;">
+                <svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="var(--primary)" stroke-width="1.5"><path d="M3 5a2 2 0 012-2h2l2 4-2 1a11 11 0 005 5l1-2 4 2v2a2 2 0 01-2 2A15 15 0 013 5z"/></svg>
+              </div>
+              <div><div style="font-size:13.5px;color:var(--text)">電話專線</div><div style="font-size:12px;color:var(--text-3)">0800-xxx-xxx（24H）</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAGE 2: 方案建構器 -->
+  <div id="p2" class="page">
+    <div class="topbar">
+      <div>
+        <div class="topbar-title">方案建構器</div>
+        <div class="topbar-sub">勾選需要的服務項目，系統將即時計算費用</div>
+      </div>
+      <div class="topbar-actions">
+        <button class="btn btn-sm" onclick="showPage('p3', document.querySelectorAll('.nav-item')[2])">進入試算器</button>
+        <button class="btn btn-primary btn-sm" onclick="saveBuilder()">儲存方案</button>
+      </div>
+    </div>
+    <div style="padding:32px 36px;">
+      <div class="price-type-legend">
+        <div class="price-type-item"><div class="price-type-dot" style="background:#D4601A;"></div><span>必要費用</span></div>
+        <div class="price-type-item"><div class="price-type-dot" style="background:var(--primary);"></div><span>可選加購</span></div>
+        <div class="price-type-item"><div class="price-type-dot" style="background:#7A9AB2;"></div><span>常見額外費用</span></div>
+      </div>
+
+      <div class="service-category">
+        <div class="category-header"><div class="category-dot" style="background:#D4601A;"></div><div class="category-name">基本必要</div></div>
+        <div class="service-grid">
+          <div class="service-item checked" onclick="toggleService(this, 12000, '接體服務')">
+            <div class="service-item-top"><span class="service-name">接體服務</span><div class="check-circle"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4l3 3 5-6" stroke="white" stroke-width="1.8" stroke-linecap="round"/></svg></div></div>
+            <div style="display:flex;align-items:center;justify-content:space-between;"><span class="service-price">$12,000</span><span class="tag tag-required">必要</span></div>
+            <div class="service-note">含遺體接送至殯儀館</div>
+          </div>
+          <div class="service-item checked" onclick="toggleService(this, 8000, '冰存服務')">
+            <div class="service-item-top"><span class="service-name">冰存服務</span><div class="check-circle"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4l3 3 5-6" stroke="white" stroke-width="1.8" stroke-linecap="round"/></svg></div></div>
+            <div style="display:flex;align-items:center;justify-content:space-between;"><span class="service-price">$8,000 起</span><span class="tag tag-required">必要</span></div>
+            <div class="service-note">每日計費，最少 3 日</div>
+          </div>
+          <div class="service-item checked" onclick="toggleService(this, 25000, '火化')">
+            <div class="service-item-top"><span class="service-name">火化</span><div class="check-circle"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4l3 3 5-6" stroke="white" stroke-width="1.8" stroke-linecap="round"/></svg></div></div>
+            <div style="display:flex;align-items:center;justify-content:space-between;"><span class="service-price">$25,000</span><span class="tag tag-required">必要</span></div>
+            <div class="service-note">含公立火化爐使用費</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="service-category">
+        <div class="category-header"><div class="category-dot"></div><div class="category-name">告別式安排</div></div>
+        <div class="service-grid">
+          <div class="service-item" onclick="toggleService(this, 35000, '告別式（基本）')">
+            <div class="service-item-top"><span class="service-name">告別式（基本）</span><div class="check-circle"></div></div>
+            <div style="display:flex;align-items:center;justify-content:space-between;"><span class="service-price">$35,000</span><span class="tag tag-optional">可選</span></div>
+            <div class="service-note">含場地 3 小時、基本佈置</div>
+          </div>
+          <div class="service-item" onclick="toggleService(this, 18000, '法會儀式')">
+            <div class="service-item-top"><span class="service-name">法會儀式</span><div class="check-circle"></div></div>
+            <div style="display:flex;align-items:center;justify-content:space-between;"><span class="service-price">$18,000</span><span class="tag tag-optional">可選</span></div>
+            <div class="service-note">佛教 / 道教 / 基督教</div>
+          </div>
+          <div class="service-item" onclick="toggleService(this, 8000, '花藝佈置')">
+            <div class="service-item-top"><span class="service-name">花藝佈置</span><div class="check-circle"></div></div>
+            <div style="display:flex;align-items:center;justify-content:space-between;"><span class="service-price">$8,000 起</span><span class="tag tag-optional">可選</span></div>
+            <div class="service-note">新鮮花卉，多種風格</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="service-category">
+        <div class="category-header"><div class="category-dot" style="background:var(--text-3);"></div><div class="category-name">塔位與骨灰</div></div>
+        <div class="service-grid">
+          <div class="service-item" onclick="toggleService(this, 120000, '靈骨塔位（一般）')">
+            <div class="service-item-top"><span class="service-name">靈骨塔位（一般）</span><div class="check-circle"></div></div>
+            <div style="display:flex;align-items:center;justify-content:space-between;"><span class="service-price">$120,000 起</span><span class="tag tag-extra">常見</span></div>
+            <div class="service-note">民間靈骨塔，含年費</div>
+          </div>
+          <div class="service-item" onclick="toggleService(this, 5000, '骨灰甕')">
+            <div class="service-item-top"><span class="service-name">骨灰甕</span><div class="check-circle"></div></div>
+            <div style="display:flex;align-items:center;justify-content:space-between;"><span class="service-price">$5,000 起</span><span class="tag tag-optional">可選</span></div>
+            <div class="service-note">陶瓷 / 石雕 / 環保材質</div>
+          </div>
+          <div class="service-item" onclick="toggleService(this, 15000, '樹葬 / 海葬')">
+            <div class="service-item-top"><span class="service-name">樹葬 / 海葬</span><div class="check-circle"></div></div>
+            <div style="display:flex;align-items:center;justify-content:space-between;"><span class="service-price">$15,000 起</span><span class="tag tag-optional">可選</span></div>
+            <div class="service-note">環保葬，含申請代辦</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="service-category">
+        <div class="category-header"><div class="category-dot" style="background:var(--text-3);"></div><div class="category-name">行政與車輛</div></div>
+        <div class="service-grid">
+          <div class="service-item" onclick="toggleService(this, 6000, '文件代辦')">
+            <div class="service-item-top"><span class="service-name">文件代辦</span><div class="check-circle"></div></div>
+            <div style="display:flex;align-items:center;justify-content:space-between;"><span class="service-price">$6,000</span><span class="tag tag-optional">可選</span></div>
+            <div class="service-note">戶政、健保、遺產申報</div>
+          </div>
+          <div class="service-item" onclick="toggleService(this, 9000, '車輛服務')">
+            <div class="service-item-top"><span class="service-name">車輛服務</span><div class="check-circle"></div></div>
+            <div style="display:flex;align-items:center;justify-content:space-between;"><span class="service-price">$9,000 起</span><span class="tag tag-optional">可選</span></div>
+            <div class="service-note">靈車 + 家屬車 1 輛</div>
+          </div>
+          <div class="service-item" onclick="toggleService(this, 3500, '遺照製作')">
+            <div class="service-item-top"><span class="service-name">遺照製作</span><div class="check-circle"></div></div>
+            <div style="display:flex;align-items:center;justify-content:space-between;"><span class="service-price">$3,500</span><span class="tag tag-optional">可選</span></div>
+            <div class="service-note">數位修圖 + 沖印</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="sticky-summary">
+      <div><div class="summary-items" id="builderCount">已選 <strong>3</strong> 項服務</div><div style="font-size:12px;color:var(--text-3);">含 3 項必要費用</div></div>
+      <div style="text-align:right;">
+        <div style="font-size:12px;color:var(--text-3);margin-bottom:2px;">預估總計</div>
+        <div class="summary-price" id="builderTotal">NT$ 45,000</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAGE 3: 總價試算器 -->
+  <div id="p3" class="page">
+    <div class="topbar">
+      <div>
+        <div class="topbar-title">總價試算器</div>
+        <div class="topbar-sub">所有選項即時反映於總金額，費用明確透明</div>
+      </div>
+    </div>
+    <div style="padding:32px 36px;">
+      <div class="grid-2">
+        <div>
+          <div class="card">
+            <div class="card-title">費用明細</div>
+            <div class="card-sub">點選「×」可移除項目</div>
+            <div class="price-type-legend" style="margin-bottom:12px;">
+              <div class="price-type-item"><div class="price-type-dot" style="background:#D4601A;"></div><span>必要</span></div>
+              <div class="price-type-item"><div class="price-type-dot" style="background:var(--primary);"></div><span>可選</span></div>
+              <div class="price-type-item"><div class="price-type-dot" style="background:var(--text-3);"></div><span>額外</span></div>
+            </div>
+            <div class="price-breakdown" id="priceBreakdown"></div>
+            <div style="margin-top:8px;">
+              <button class="btn btn-sm" style="width:100%;" onclick="openAddItem()">+ 新增項目</button>
+            </div>
+          </div>
+          <div id="addItemPanel" style="display:none;" class="card" style="margin-top:-8px;">
+            <div class="card-title">新增自訂費用</div>
+            <div style="display:flex;flex-direction:column;gap:10px;margin-top:8px;">
+              <input class="input" id="newItemName" placeholder="項目名稱（如：告別式花藝加強）" style="width:100%;">
+              <input class="input" id="newItemPrice" type="number" placeholder="金額（NT$）" style="width:100%;">
+              <select class="select" id="newItemType" style="width:100%;">
+                <option value="optional">可選加購</option>
+                <option value="required">必要費用</option>
+                <option value="extra">常見額外</option>
+              </select>
+              <div style="display:flex;gap:8px;">
+                <button class="btn btn-primary" style="flex:1;" onclick="addCustomItem()">新增</button>
+                <button class="btn" onclick="document.getElementById('addItemPanel').style.display='none'">取消</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="price-total-box" style="margin-bottom:20px;">
+            <div>
+              <div class="price-total-label">方案總金額</div>
+              <div class="price-total-num" id="calcTotal">NT$ 45,000</div>
+              <div class="price-total-unit" id="calcItemCount">3 項服務</div>
+            </div>
+            <div style="text-align:right;">
+              <div style="font-size:12px;color:rgba(255,255,255,0.55);margin-bottom:8px;">費用組成</div>
+              <div id="calcBreakdown" style="font-size:13px;color:rgba(255,255,255,0.75);line-height:1.8;"></div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-title">費用說明</div>
+            <div style="display:flex;flex-direction:column;gap:12px;margin-top:4px;">
+              <div style="padding:12px 14px;background:var(--surface-2);border-radius:8px;border-left:3px solid #D4601A;">
+                <div style="font-size:12.5px;font-weight:500;color:#9B3A20;margin-bottom:3px;">必要費用</div>
+                <div style="font-size:13px;color:var(--text-2);">接體、冰存、火化是辦理後事不可缺少的基本項目，所有業者均需提供這三項。</div>
+              </div>
+              <div style="padding:12px 14px;background:var(--surface-2);border-radius:8px;border-left:3px solid var(--primary);">
+                <div style="font-size:12.5px;font-weight:500;color:var(--primary-dark);margin-bottom:3px;">可選加購</div>
+                <div style="font-size:13px;color:var(--text-2);">根據家屬需求彈性選擇，可任意增減，不影響必要程序。</div>
+              </div>
+              <div style="padding:12px 14px;background:var(--surface-2);border-radius:8px;border-left:3px solid var(--text-3);">
+                <div style="font-size:12.5px;font-weight:500;color:var(--text-2);margin-bottom:3px;">常見額外費用</div>
+                <div style="font-size:13px;color:var(--text-2);">塔位、法會等費用常在決策後才產生，建議提前納入預算估算。</div>
+              </div>
+            </div>
+          </div>
+          <div class="card" style="margin-top:-4px;">
+            <div class="card-title">付款方式</div>
+            <div style="display:flex;flex-direction:column;gap:8px;margin-top:8px;">
+              <label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-size:14px;color:var(--text-2);">
+                <input type="radio" name="payment" checked style="accent-color:var(--primary);"> 一次付清
+              </label>
+              <label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-size:14px;color:var(--text-2);">
+                <input type="radio" name="payment" style="accent-color:var(--primary);"> 分期付款（需確認業者支援）
+              </label>
+              <label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-size:14px;color:var(--text-2);">
+                <input type="radio" name="payment" style="accent-color:var(--primary);"> 喪葬補助抵扣後付清
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAGE 4: 比較頁 -->
+  <div id="p4" class="page">
+    <div class="topbar">
+      <div>
+        <div class="topbar-title">比較頁</div>
+        <div class="topbar-sub">同時比較多家業者，找到最適合的方案</div>
+      </div>
+      <div class="topbar-actions">
+        <button class="btn btn-sm">＋ 新增業者</button>
+      </div>
+    </div>
+    <div style="padding:32px 36px;">
+      <div class="filter-bar">
+        <div class="filter-chip active" onclick="toggleFilter(this)">全部</div>
+        <div class="filter-chip" onclick="toggleFilter(this)">台北</div>
+        <div class="filter-chip" onclick="toggleFilter(this)">新北</div>
+        <div class="filter-chip" onclick="toggleFilter(this)">佛教適配</div>
+        <div class="filter-chip" onclick="toggleFilter(this)">24H 服務</div>
+        <div class="filter-chip" onclick="toggleFilter(this)">有契約範本</div>
+        <div class="filter-chip" onclick="toggleFilter(this)">環保葬可選</div>
+        <select class="select" style="font-size:13px;padding:5px 32px 5px 12px;">
+          <option>排序：綜合評分</option>
+          <option>排序：總價由低至高</option>
+          <option>排序：評價最高</option>
+        </select>
+      </div>
+      <div class="card" style="padding:0;overflow:hidden;">
+        <div class="compare-table-wrapper">
+          <table class="compare-table">
+            <thead>
+              <tr>
+                <th class="feature-col" style="width:160px;">項目</th>
+                <th>
+                  <div class="compare-name">永安禮儀</div>
+                  <div class="compare-price">NT$ 89,000</div>
+                  <div class="star-row">★★★★★ <span class="rating-num">4.8 (132)</span></div>
+                  <span class="compare-badge">推薦</span>
+                </th>
+                <th>
+                  <div class="compare-name">祥和殯葬</div>
+                  <div class="compare-price">NT$ 72,000</div>
+                  <div class="star-row">★★★★☆ <span class="rating-num">4.3 (88)</span></div>
+                </th>
+                <th>
+                  <div class="compare-name">心安禮儀社</div>
+                  <div class="compare-price">NT$ 105,000</div>
+                  <div class="star-row">★★★★★ <span class="rating-num">4.9 (57)</span></div>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="feature-col">接體服務</td>
+                <td class="compare-highlight"><span class="check-icon">✓</span></td>
+                <td><span class="check-icon">✓</span></td>
+                <td class="compare-highlight"><span class="check-icon">✓</span></td>
+              </tr>
+              <tr>
+                <td class="feature-col">冰存（3日）</td>
+                <td class="compare-highlight">NT$ 8,000</td>
+                <td>NT$ 6,000</td>
+                <td class="compare-highlight">NT$ 9,000</td>
+              </tr>
+              <tr>
+                <td class="feature-col">火化</td>
+                <td class="compare-highlight"><span class="check-icon">✓</span></td>
+                <td><span class="check-icon">✓</span></td>
+                <td class="compare-highlight"><span class="check-icon">✓</span></td>
+              </tr>
+              <tr>
+                <td class="feature-col">告別式場地</td>
+                <td class="compare-highlight">自有場地</td>
+                <td>租用場地</td>
+                <td class="compare-highlight">自有場地</td>
+              </tr>
+              <tr>
+                <td class="feature-col">宗教適配</td>
+                <td class="compare-highlight">佛 / 道 / 基督</td>
+                <td>佛 / 道</td>
+                <td class="compare-highlight">佛 / 道 / 基督 / 無宗教</td>
+              </tr>
+              <tr>
+                <td class="feature-col">24H 接體</td>
+                <td class="compare-highlight"><span class="check-icon">✓</span></td>
+                <td><span class="check-icon">✓</span></td>
+                <td class="compare-highlight"><span class="check-icon">✓</span></td>
+              </tr>
+              <tr>
+                <td class="feature-col">契約範本</td>
+                <td class="compare-highlight"><span class="check-icon">✓</span></td>
+                <td><span class="cross-icon">—</span></td>
+                <td class="compare-highlight"><span class="check-icon">✓</span></td>
+              </tr>
+              <tr>
+                <td class="feature-col">環保葬選項</td>
+                <td class="compare-highlight"><span class="check-icon">✓</span></td>
+                <td><span class="cross-icon">—</span></td>
+                <td class="compare-highlight"><span class="check-icon">✓</span></td>
+              </tr>
+              <tr>
+                <td class="feature-col">服務地區</td>
+                <td class="compare-highlight">台北 / 新北 / 基隆</td>
+                <td>台北 / 新北</td>
+                <td class="compare-highlight">全台</td>
+              </tr>
+              <tr>
+                <td class="feature-col" style="border-bottom:none;"></td>
+                <td class="compare-highlight" style="border-bottom:none;">
+                  <button class="btn btn-primary btn-sm" style="width:90%;">選擇此方案</button>
+                </td>
+                <td style="border-bottom:none;">
+                  <button class="btn btn-sm" style="width:90%;">選擇此方案</button>
+                </td>
+                <td class="compare-highlight" style="border-bottom:none;">
+                  <button class="btn btn-sm" style="width:90%;">選擇此方案</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div style="font-size:12px;color:var(--text-3);margin-top:12px;">
+        * 以上報價為方案估算，實際費用以業者正式報價為準。建議確認契約範本後再簽署。
+      </div>
+    </div>
+  </div>
+
+  <!-- PAGE 5: 家庭共決空間 -->
+  <div id="p5" class="page">
+    <div class="topbar">
+      <div>
+        <div class="topbar-title">家庭共決空間</div>
+        <div class="topbar-sub">家屬共同查看方案、留言討論與確認費用分攤</div>
+      </div>
+      <div class="topbar-actions">
+        <button class="btn btn-sm" onclick="inviteMember()">＋ 邀請家屬</button>
+      </div>
+    </div>
+    <div style="padding:32px 36px;">
+      <div class="grid-2">
+        <div>
+          <div class="family-plan-card">
+            <div class="family-plan-info">
+              <div class="family-plan-name">永安禮儀 — 標準方案</div>
+              <div class="family-plan-price">NT$ 89,000</div>
+              <div style="font-size:13px;color:var(--text-2);margin-bottom:12px;">接體、冰存3日、火化、告別式、文件代辦</div>
+              <div style="font-size:12.5px;color:var(--text-2);margin-bottom:6px;">家屬投票結果</div>
+              <div class="vote-bar-wrap"><div class="vote-bar-fill" id="voteBar" style="width:67%;"></div></div>
+              <div class="vote-label"><span id="agreeCount">2 人同意</span><span id="disagreeCount">1 人反對</span></div>
+              <div class="vote-btns">
+                <button class="vote-btn agree" onclick="vote('agree')">同意此方案</button>
+                <button class="vote-btn disagree" onclick="vote('disagree')">反對</button>
+                <button class="vote-btn" onclick="">待討論</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-title">費用分攤</div>
+            <div class="card-sub">根據參與人數自動均分，可手動調整</div>
+            <div class="budget-split" id="budgetSplit">
+              <div class="budget-split-item">
+                <div class="budget-split-name">林大明（長子）</div>
+                <div class="budget-split-amt">NT$ 35,600</div>
+                <div class="budget-split-pct">40%</div>
+              </div>
+              <div class="budget-split-item">
+                <div class="budget-split-name">林美如（長女）</div>
+                <div class="budget-split-amt">NT$ 26,700</div>
+                <div class="budget-split-pct">30%</div>
+              </div>
+              <div class="budget-split-item">
+                <div class="budget-split-name">林志偉（次子）</div>
+                <div class="budget-split-amt">NT$ 26,700</div>
+                <div class="budget-split-pct">30%</div>
+              </div>
+            </div>
+            <div style="margin-top:14px;"><button class="btn btn-sm">調整分攤比例</button></div>
+          </div>
+        </div>
+
+        <div>
+          <div class="card">
+            <div class="card-title">家屬討論</div>
+            <div class="card-sub">留言將對所有受邀家屬可見</div>
+            <div class="family-members">
+              <div class="member-avatar" style="background:#4A6B8A;" title="林大明">大</div>
+              <div class="member-avatar" style="background:#7AA2C0;" title="林美如">美</div>
+              <div class="member-avatar" style="background:#2C4E6E;" title="林志偉">志</div>
+              <div style="width:34px;height:34px;border-radius:50%;border:1.5px dashed var(--border);display:flex;align-items:center;justify-content:center;font-size:18px;color:var(--border);cursor:pointer;" onclick="inviteMember()">+</div>
+            </div>
+            <div id="commentList">
+              <div class="comment-item">
+                <div class="comment-avatar" style="background:#4A6B8A;">大</div>
+                <div class="comment-body">
+                  <div class="comment-meta">林大明 · 2 小時前</div>
+                  <div class="comment-text">永安的報價比較合理，而且他們有契約範本，可以先請對方寄過來看看。</div>
+                </div>
+              </div>
+              <div class="comment-item">
+                <div class="comment-avatar" style="background:#7AA2C0;">美</div>
+                <div class="comment-body">
+                  <div class="comment-meta">林美如 · 1 小時前</div>
+                  <div class="comment-text">我有問過媽媽以前說過想要佛教儀式，永安有提供這個，+1。</div>
+                </div>
+              </div>
+              <div class="comment-item">
+                <div class="comment-avatar" style="background:#2C4E6E;">志</div>
+                <div class="comment-body">
+                  <div class="comment-meta">林志偉 · 30 分鐘前</div>
+                  <div class="comment-text">心安的評價更高，雖然貴一點。可以問他們能不能談嗎？</div>
+                </div>
+              </div>
+            </div>
+            <div class="comment-input-row">
+              <textarea class="comment-input" id="commentInput" rows="2" placeholder="留言給家人…"></textarea>
+              <button class="btn btn-primary btn-sm" onclick="addComment()">送出</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAGE 6: 案件進度追蹤 -->
+  <div id="p6" class="page">
+    <div class="topbar">
+      <div>
+        <div class="topbar-title">案件進度追蹤</div>
+        <div class="topbar-sub">從諮詢到結案，全程透明掌握</div>
+      </div>
+      <div class="topbar-actions">
+        <button class="btn btn-sm">下載進度報告</button>
+      </div>
+    </div>
+    <div style="padding:32px 36px;">
+      <div class="progress-header">
+        <div>
+          <div class="case-id">案件編號 #2024-0512-001</div>
+          <div class="case-name">林陳秀美女士 後事服務</div>
+          <div style="font-size:13px;color:var(--text-3);margin-top:2px;">服務業者：永安禮儀 · 負責人：陳大年</div>
+        </div>
+        <div style="text-align:right;">
+          <div class="case-status">進行中</div>
+          <div style="font-size:12px;color:var(--text-3);margin-top:8px;">整體進度</div>
+          <div class="progress-bar-outer" style="width:180px;margin-top:6px;"><div class="progress-bar-inner" style="width:55%;"></div></div>
+          <div class="progress-pct">步驟 3 / 6 完成（55%）</div>
+        </div>
+      </div>
+
+      <div class="grid-2" style="align-items:start;">
+        <div>
+          <div class="card">
+            <div class="card-title">流程時序</div>
+            <div class="card-sub" style="margin-bottom:20px;">點選各步驟可查看詳情與待辦事項</div>
+            <div class="timeline">
+              <div class="timeline-item">
+                <div class="timeline-dot done">
+                  <svg width="9" height="7" viewBox="0 0 9 7" fill="none"><path d="M1 3.5l2.5 2.5 5-5" stroke="white" stroke-width="1.6" stroke-linecap="round"/></svg>
+                </div>
+                <div class="timeline-card">
+                  <div class="timeline-card-top">
+                    <span class="timeline-label">諮詢與接案</span>
+                    <span class="timeline-date">05/12 09:15</span>
+                  </div>
+                  <div class="timeline-detail">完成初步諮詢，確認服務需求，指派負責人陳大年。</div>
+                </div>
+              </div>
+              <div class="timeline-item">
+                <div class="timeline-dot done">
+                  <svg width="9" height="7" viewBox="0 0 9 7" fill="none"><path d="M1 3.5l2.5 2.5 5-5" stroke="white" stroke-width="1.6" stroke-linecap="round"/></svg>
+                </div>
+                <div class="timeline-card">
+                  <div class="timeline-card-top">
+                    <span class="timeline-label">報價與確認</span>
+                    <span class="timeline-date">05/12 11:30</span>
+                  </div>
+                  <div class="timeline-detail">已簽署服務契約，總金額 NT$ 89,000，初付訂金 NT$ 30,000。</div>
+                </div>
+              </div>
+              <div class="timeline-item active">
+                <div class="timeline-dot active"></div>
+                <div class="timeline-card">
+                  <div class="timeline-card-top">
+                    <span class="timeline-label">接體與冰存</span>
+                    <span class="timeline-date">進行中</span>
+                  </div>
+                  <div class="timeline-detail">遺體已於 05/12 下午接至殯儀館，冰存至 05/15 14:00，共 3 日。</div>
+                  <div class="timeline-actions">
+                    <span class="chip">冰存至 05/15</span>
+                    <button class="btn btn-sm">聯絡業者</button>
+                  </div>
+                </div>
+              </div>
+              <div class="timeline-item">
+                <div class="timeline-dot pending"></div>
+                <div class="timeline-card">
+                  <div class="timeline-card-top">
+                    <span class="timeline-label">告別式安排</span>
+                    <span class="timeline-date">05/15 預計</span>
+                  </div>
+                  <div class="timeline-detail">佛教告別式，預計 05/15 10:00 於台北第二殯儀館第 A3 廳舉行。</div>
+                </div>
+              </div>
+              <div class="timeline-item">
+                <div class="timeline-dot pending"></div>
+                <div class="timeline-card">
+                  <div class="timeline-card-top">
+                    <span class="timeline-label">火化與領取</span>
+                    <span class="timeline-date">05/15 預計</span>
+                  </div>
+                  <div class="timeline-detail">告別式後安排火化，預計 05/15 15:00 可領取骨灰。</div>
+                </div>
+              </div>
+              <div class="timeline-item">
+                <div class="timeline-dot pending"></div>
+                <div class="timeline-card">
+                  <div class="timeline-card-top">
+                    <span class="timeline-label">結案與文件</span>
+                    <span class="timeline-date">05/16 預計</span>
+                  </div>
+                  <div class="timeline-detail">文件代辦包含除戶、健保退保與喪葬補助申請，預計 7 個工作日完成。</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="card">
+            <div class="card-title">最新通知</div>
+            <div class="card-sub">系統將於每個步驟完成後自動通知</div>
+            <div class="notif-list">
+              <div class="notif-item">
+                <div class="notif-dot"></div>
+                <div>
+                  <div class="notif-text">遺體已安全抵達台北第二殯儀館，冰存中，可隨時聯繫業者確認狀態。</div>
+                  <div class="notif-time">今天 14:32</div>
+                </div>
+              </div>
+              <div class="notif-item">
+                <div class="notif-dot"></div>
+                <div>
+                  <div class="notif-text">告別式場地 A3 廳已確認，05/15 10:00 開始，請家屬提前 30 分鐘到場。</div>
+                  <div class="notif-time">今天 12:00</div>
+                </div>
+              </div>
+              <div class="notif-item" style="border-left-color:var(--warning);">
+                <div class="notif-dot" style="background:var(--warning);"></div>
+                <div>
+                  <div class="notif-text">提醒：訂金收據已上傳，請於 05/15 完成尾款 NT$ 59,000 支付。</div>
+                  <div class="notif-time">今天 11:00</div>
+                </div>
+              </div>
+              <div class="notif-item" style="border-left-color:var(--success);">
+                <div class="notif-dot" style="background:var(--success);"></div>
+                <div>
+                  <div class="notif-text">服務契約已完成簽署，訂金 NT$ 30,000 已確認入帳。</div>
+                  <div class="notif-time">今天 11:31</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="card" style="margin-top:-4px;">
+            <div class="card-title">待辦清單</div>
+            <div style="display:flex;flex-direction:column;gap:8px;margin-top:8px;">
+              <label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-size:14px;color:var(--text-2);">
+                <input type="checkbox" checked style="accent-color:var(--primary);"> 確認告別式出席人數（<strong>今天截止</strong>）
+              </label>
+              <label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-size:14px;color:var(--text-2);">
+                <input type="checkbox" style="accent-color:var(--primary);"> 準備遺照電子檔交給業者
+              </label>
+              <label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-size:14px;color:var(--text-2);">
+                <input type="checkbox" style="accent-color:var(--primary);"> 安排 05/15 家屬交通
+              </label>
+              <label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-size:14px;color:var(--text-2);">
+                <input type="checkbox" style="accent-color:var(--primary);"> 準備尾款 NT$ 59,000（05/15）
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- .main -->
+</div><!-- .shell -->
+
+<script>
+// --- Navigation ---
+function showPage(id, navEl) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  if (navEl) navEl.classList.add('active');
+  document.getElementById('mainArea').scrollTop = 0;
+}
+
+// --- Page 1: Situation ---
+function selectSituation(card, type) {
+  document.querySelectorAll('.situation-card').forEach(c => c.classList.remove('selected'));
+  card.classList.add('selected');
+  const guides = {
+    urgent: { text:'家人剛過世需要緊急協助，我們建議您立即前往「方案建構器」選擇接體與冰存服務，或直接撥打 24H 專線由顧問引導。', cta:'立即前往方案建構器', page:'p2' },
+    plan: { text:'您正在預立規劃，建議先在「比較頁」瀏覽各業者服務與報價，再使用「總價試算器」建立預算。', cta:'前往比較業者', page:'p4' },
+    fire: { text:'已決定火化方向，可直接進入「方案建構器」選擇火化、塔位與相關服務，快速組建完整方案。', cta:'前往方案建構器', page:'p2' },
+    undecided: { text:'建議您先透過「比較頁」了解各業者差異與費用區間，再使用「方案建構器」逐步組合適合的方案。', cta:'前往比較頁', page:'p4' },
+  };
+  const g = guides[type];
+  document.getElementById('guideText').textContent = g.text;
+  const btn = document.getElementById('guideCta');
+  btn.textContent = g.cta;
+  btn.onclick = () => showPage(g.page, document.querySelectorAll('.nav-item')[['p1','p2','p3','p4','p5','p6'].indexOf(g.page)]);
+  document.getElementById('situationGuide').style.display = 'block';
+}
+
+// --- Page 2: Builder ---
+const builderItems = [
+  {name:'接體服務', price:12000, type:'required'},
+  {name:'冰存服務', price:8000, type:'required'},
+  {name:'火化', price:25000, type:'required'},
+];
+
+function toggleService(el, price, name) {
+  el.classList.toggle('checked');
+  const isChecked = el.classList.contains('checked');
+  if (isChecked) {
+    builderItems.push({name, price, type:'optional'});
+  } else {
+    const idx = builderItems.findIndex(i => i.name === name);
+    if (idx > -1) builderItems.splice(idx, 1);
+  }
+  updateBuilderTotal();
+  updateCalcPage();
+}
+
+function updateBuilderTotal() {
+  const total = builderItems.reduce((s, i) => s + i.price, 0);
+  const count = builderItems.length;
+  document.getElementById('builderTotal').textContent = 'NT$ ' + total.toLocaleString();
+  document.getElementById('builderCount').innerHTML = '已選 <strong>' + count + '</strong> 項服務';
+}
+
+function saveBuilder() {
+  updateCalcPage();
+  showPage('p3', document.querySelectorAll('.nav-item')[2]);
+}
+
+// --- Page 3: Calculator ---
+function updateCalcPage() {
+  const bd = document.getElementById('priceBreakdown');
+  bd.innerHTML = '';
+  const typeColors = {required:'#D4601A', optional:'var(--primary)', extra:'var(--text-3)'};
+  builderItems.forEach((item, idx) => {
+    const row = document.createElement('div');
+    row.className = 'price-row';
+    row.innerHTML = `<span class="price-row-name"><span style="width:8px;height:8px;border-radius:50%;background:${typeColors[item.type]||'var(--primary)'};display:inline-block;"></span>${item.name}</span><div style="display:flex;align-items:center;gap:12px;"><span class="price-row-amt">NT$ ${item.price.toLocaleString()}</span><span class="price-row-remove" onclick="removeCalcItem(${idx})">×</span></div>`;
+    bd.appendChild(row);
+  });
+  const total = builderItems.reduce((s,i) => s+i.price, 0);
+  document.getElementById('calcTotal').textContent = 'NT$ ' + total.toLocaleString();
+  document.getElementById('calcItemCount').textContent = builderItems.length + ' 項服務';
+  const req = builderItems.filter(i=>i.type==='required').reduce((s,i)=>s+i.price,0);
+  const opt = builderItems.filter(i=>i.type==='optional').reduce((s,i)=>s+i.price,0);
+  const ext = builderItems.filter(i=>i.type==='extra').reduce((s,i)=>s+i.price,0);
+  document.getElementById('calcBreakdown').innerHTML =
+    (req?`必要費用 NT$ ${req.toLocaleString()}<br>`:'') +
+    (opt?`可選費用 NT$ ${opt.toLocaleString()}<br>`:'') +
+    (ext?`額外費用 NT$ ${ext.toLocaleString()}`:'');
+}
+
+function removeCalcItem(idx) {
+  builderItems.splice(idx, 1);
+  updateCalcPage();
+  updateBuilderTotal();
+}
+
+function openAddItem() {
+  const panel = document.getElementById('addItemPanel');
+  panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+}
+
+function addCustomItem() {
+  const name = document.getElementById('newItemName').value.trim();
+  const price = parseInt(document.getElementById('newItemPrice').value);
+  const type = document.getElementById('newItemType').value;
+  if (!name || isNaN(price) || price <= 0) { alert('請輸入有效的項目名稱與金額'); return; }
+  builderItems.push({name, price, type});
+  document.getElementById('newItemName').value = '';
+  document.getElementById('newItemPrice').value = '';
+  document.getElementById('addItemPanel').style.display = 'none';
+  updateCalcPage();
+  updateBuilderTotal();
+}
+
+// --- Page 4: Compare ---
+function toggleFilter(el) {
+  document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+}
+
+// --- Page 5: Family ---
+let votes = {agree: 2, disagree: 1};
+
+function vote(type) {
+  votes[type]++;
+  const total = votes.agree + votes.disagree;
+  const pct = Math.round((votes.agree / total) * 100);
+  document.getElementById('voteBar').style.width = pct + '%';
+  document.getElementById('agreeCount').textContent = votes.agree + ' 人同意';
+  document.getElementById('disagreeCount').textContent = votes.disagree + ' 人反對';
+}
+
+const memberNames = ['林大明', '林美如', '林志偉'];
+const memberColors = ['#4A6B8A','#7AA2C0','#2C4E6E'];
+const memberInitials = ['大','美','志'];
+let commentCount = 3;
+
+function addComment() {
+  const input = document.getElementById('commentInput');
+  const text = input.value.trim();
+  if (!text) return;
+  const idx = commentCount % 3;
+  const list = document.getElementById('commentList');
+  const div = document.createElement('div');
+  div.className = 'comment-item';
+  div.innerHTML = `<div class="comment-avatar" style="background:${memberColors[idx]};">${memberInitials[idx]}</div><div class="comment-body"><div class="comment-meta">${memberNames[idx]} · 剛剛</div><div class="comment-text">${text}</div></div>`;
+  list.appendChild(div);
+  input.value = '';
+  commentCount++;
+  list.scrollTop = list.scrollHeight;
+}
+
+function inviteMember() {
+  alert('已複製邀請連結，可發送給家屬加入共決空間。');
+}
+
+// Init
+updateCalcPage();
+</script>
+</body>
+</html>
+目前顯示的是「前台.html」。
