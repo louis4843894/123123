@@ -1,0 +1,1051 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>殯殯有禮 — 業者後台</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@300;400;500&family=Noto+Sans+TC:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #EDF2F7;
+    --surface: #FFFFFF;
+    --surface-2: #F7FAFC;
+    --primary: #4A6B8A;
+    --primary-dark: #2C4E6E;
+    --primary-light: #7AA2C0;
+    --primary-pale: #D6E6F2;
+    --accent: #3A7CA5;
+    --text: #1A2E42;
+    --text-2: #4A6680;
+    --text-3: #7A9AB2;
+    --border: #CCDDE8;
+    --border-light: #E2EEF5;
+    --danger: #C0392B;
+    --success: #2E7D62;
+    --warning: #B5830A;
+    --tag-bg: #E4F0F8;
+    --shadow: 0 1px 4px rgba(42,80,110,0.10);
+    --shadow-md: 0 4px 16px rgba(42,80,110,0.12);
+    --radius: 10px;
+    --radius-lg: 16px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Noto Sans TC', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; font-size: 15px; line-height: 1.65; }
+
+  /* Layout */
+  .shell { display: flex; min-height: 100vh; }
+  .sidebar {
+    width: 230px; min-width: 230px;
+    background: var(--primary-dark);
+    display: flex; flex-direction: column;
+    position: sticky; top: 0; height: 100vh;
+    overflow-y: auto;
+  }
+  .sidebar-logo { padding: 24px 22px 18px; border-bottom: 1px solid rgba(255,255,255,0.10); }
+  .logo-platform { font-size: 11px; color: rgba(255,255,255,0.38); letter-spacing: 0.1em; margin-bottom: 4px; }
+  .logo-name { font-family: 'Noto Serif TC', serif; font-size: 20px; font-weight: 400; color: #FFF; letter-spacing: 0.04em; }
+  .logo-tag { display: inline-block; margin-top: 6px; padding: 2px 9px; border-radius: 20px; background: rgba(122,162,192,0.25); font-size: 11px; color: rgba(255,255,255,0.65); }
+  .sidebar-nav { flex: 1; padding: 14px 0; }
+  .nav-section-label { padding: 10px 20px 4px; font-size: 10.5px; letter-spacing: 0.12em; color: rgba(255,255,255,0.28); text-transform: uppercase; }
+  .nav-item {
+    display: flex; align-items: center; gap: 11px;
+    padding: 11px 20px; color: rgba(255,255,255,0.62);
+    cursor: pointer; border-left: 3px solid transparent;
+    transition: all 0.2s; font-size: 13.5px; user-select: none;
+  }
+  .nav-item:hover { color: rgba(255,255,255,0.90); background: rgba(255,255,255,0.06); }
+  .nav-item.active { color: #FFF; background: rgba(255,255,255,0.10); border-left-color: var(--primary-light); }
+  .nav-icon { width: 17px; height: 17px; flex-shrink: 0; }
+  .nav-badge { margin-left: auto; background: #C0392B; color: #fff; font-size: 11px; padding: 1px 7px; border-radius: 20px; }
+  .nav-badge-blue { margin-left: auto; background: var(--primary-light); color: #fff; font-size: 11px; padding: 1px 7px; border-radius: 20px; }
+  .sidebar-vendor { margin: 12px 16px; background: rgba(255,255,255,0.08); border-radius: var(--radius); padding: 12px 14px; }
+  .sidebar-vendor-name { font-size: 13.5px; color: #fff; font-weight: 500; margin-bottom: 2px; }
+  .sidebar-vendor-sub { font-size: 12px; color: rgba(255,255,255,0.45); }
+  .sidebar-footer { padding: 14px 20px; border-top: 1px solid rgba(255,255,255,0.10); font-size: 12px; color: rgba(255,255,255,0.30); }
+
+  /* Main */
+  .main { flex: 1; overflow-y: auto; min-width: 0; }
+  .topbar { background: var(--surface); border-bottom: 1px solid var(--border); padding: 16px 36px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 10; }
+  .topbar-title { font-family: 'Noto Serif TC', serif; font-size: 18px; font-weight: 400; color: var(--text); }
+  .topbar-sub { font-size: 13px; color: var(--text-3); margin-top: 1px; }
+  .topbar-actions { display: flex; gap: 10px; align-items: center; }
+  .btn { padding: 8px 18px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); color: var(--text-2); cursor: pointer; font-size: 13.5px; font-family: 'Noto Sans TC', sans-serif; transition: all 0.18s; }
+  .btn:hover { border-color: var(--primary-light); color: var(--primary); background: var(--primary-pale); }
+  .btn-primary { background: var(--primary); color: white; border-color: var(--primary); }
+  .btn-primary:hover { background: var(--primary-dark); border-color: var(--primary-dark); color: white; }
+  .btn-sm { padding: 5px 13px; font-size: 12.5px; }
+  .btn-danger { border-color: var(--danger); color: var(--danger); }
+  .btn-danger:hover { background: #FEF0EF; }
+
+  .page { padding: 32px 36px; display: none; }
+  .page.active { display: block; }
+
+  /* Cards */
+  .card { background: var(--surface); border: 1px solid var(--border-light); border-radius: var(--radius-lg); box-shadow: var(--shadow); padding: 22px 26px; margin-bottom: 18px; }
+  .card-title { font-family: 'Noto Serif TC', serif; font-size: 16px; font-weight: 400; color: var(--text); margin-bottom: 4px; }
+  .card-sub { font-size: 13px; color: var(--text-3); margin-bottom: 16px; }
+  .section-title { font-family: 'Noto Serif TC', serif; font-size: 22px; font-weight: 300; color: var(--text); margin-bottom: 6px; }
+  .section-sub { font-size: 14px; color: var(--text-2); margin-bottom: 24px; }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+  .row { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+  .divider { border: none; border-top: 1px solid var(--border-light); margin: 16px 0; }
+  .input { padding: 9px 13px; border: 1px solid var(--border); border-radius: var(--radius); font-size: 14px; font-family: 'Noto Sans TC', sans-serif; background: var(--surface); color: var(--text); outline: none; transition: border-color 0.18s; }
+  .input:focus { border-color: var(--primary-light); }
+  .textarea { padding: 10px 13px; border: 1px solid var(--border); border-radius: var(--radius); font-size: 14px; font-family: 'Noto Sans TC', sans-serif; background: var(--surface); color: var(--text); outline: none; resize: none; line-height: 1.6; transition: border-color 0.18s; }
+  .textarea:focus { border-color: var(--primary-light); }
+  .select { padding: 9px 32px 9px 13px; border: 1px solid var(--border); border-radius: var(--radius); font-size: 14px; font-family: 'Noto Sans TC', sans-serif; background: var(--surface); color: var(--text); outline: none; appearance: none; cursor: pointer; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%234A6B8A' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; }
+  .label { font-size: 12.5px; color: var(--text-3); margin-bottom: 5px; }
+  .field { display: flex; flex-direction: column; gap: 4px; }
+  .tag { display: inline-block; padding: 2px 9px; border-radius: 20px; font-size: 11.5px; }
+  .tag-blue { background: var(--tag-bg); color: var(--primary); }
+  .tag-green { background: #E3F4EC; color: var(--success); }
+  .tag-red { background: #FEE8E5; color: var(--danger); }
+  .tag-amber { background: #FEF4E4; color: var(--warning); }
+  .tag-gray { background: var(--border-light); color: var(--text-3); }
+
+  /* Stat cards */
+  .stat-card { background: var(--surface); border: 1px solid var(--border-light); border-radius: var(--radius-lg); padding: 18px 20px; }
+  .stat-num { font-family: 'Noto Serif TC', serif; font-size: 28px; font-weight: 300; color: var(--text); line-height: 1.1; margin-bottom: 4px; }
+  .stat-label { font-size: 12.5px; color: var(--text-3); }
+  .stat-delta { font-size: 12.5px; margin-top: 6px; }
+  .delta-up { color: var(--success); }
+  .delta-down { color: var(--danger); }
+
+  /* ── PAGE 1: 店家頁管理 ── */
+  .profile-complete { display: flex; align-items: center; gap: 14px; background: var(--primary-pale); border: 1px solid var(--primary-light); border-radius: var(--radius-lg); padding: 16px 22px; margin-bottom: 20px; }
+  .profile-complete-bar-outer { flex: 1; background: rgba(74,107,138,0.18); border-radius: 20px; height: 7px; overflow: hidden; }
+  .profile-complete-bar-inner { height: 100%; background: var(--primary); border-radius: 20px; transition: width 0.5s; }
+  .profile-complete-label { font-size: 13.5px; color: var(--primary-dark); white-space: nowrap; }
+  .profile-complete-pct { font-size: 18px; font-weight: 500; color: var(--primary); white-space: nowrap; }
+  .edit-section { margin-bottom: 22px; }
+  .edit-section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; cursor: pointer; }
+  .edit-section-title { font-size: 14.5px; font-weight: 500; color: var(--text); display: flex; align-items: center; gap: 8px; }
+  .edit-section-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--primary); }
+  .edit-section-body { }
+  .service-tag-picker { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
+  .stag { padding: 6px 14px; border-radius: 20px; border: 1px solid var(--border); background: var(--surface); font-size: 13px; color: var(--text-2); cursor: pointer; transition: all 0.18s; user-select: none; }
+  .stag:hover { border-color: var(--primary-light); color: var(--primary); }
+  .stag.on { background: var(--primary); border-color: var(--primary); color: white; }
+  .price-table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+  .price-table th { padding: 10px 14px; text-align: left; border-bottom: 2px solid var(--border); color: var(--text-3); font-weight: 500; font-size: 12px; letter-spacing: 0.04em; background: var(--surface-2); }
+  .price-table td { padding: 11px 14px; border-bottom: 1px solid var(--border-light); color: var(--text-2); vertical-align: middle; }
+  .price-table tr:last-child td { border-bottom: none; }
+  .price-table tr:hover td { background: var(--surface-2); }
+  .price-input { width: 110px; padding: 5px 9px; border: 1px solid var(--border); border-radius: 6px; font-size: 13px; font-family: 'Noto Sans TC', sans-serif; color: var(--text); background: var(--surface); outline: none; text-align: right; }
+  .price-input:focus { border-color: var(--primary-light); }
+  .faq-item { background: var(--surface-2); border: 1px solid var(--border-light); border-radius: var(--radius); padding: 14px 16px; margin-bottom: 10px; }
+  .faq-q { font-size: 14px; font-weight: 500; color: var(--text); margin-bottom: 6px; display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
+  .faq-a { font-size: 13.5px; color: var(--text-2); line-height: 1.65; }
+  .upload-zone { border: 2px dashed var(--border); border-radius: var(--radius); padding: 32px; text-align: center; cursor: pointer; transition: all 0.18s; }
+  .upload-zone:hover { border-color: var(--primary-light); background: var(--primary-pale); }
+  .upload-zone-icon { margin: 0 auto 10px; width: 40px; height: 40px; background: var(--primary-pale); border-radius: 10px; display: flex; align-items: center; justify-content: center; }
+  .upload-zone-label { font-size: 14px; color: var(--text-2); }
+  .upload-zone-sub { font-size: 12.5px; color: var(--text-3); margin-top: 4px; }
+
+  /* ── PAGE 2: 名單與詢價 ── */
+  .inquiry-row { display: flex; align-items: flex-start; gap: 16px; padding: 16px 0; border-bottom: 1px solid var(--border-light); cursor: pointer; transition: background 0.15s; }
+  .inquiry-row:last-child { border-bottom: none; }
+  .inquiry-row:hover { background: var(--surface-2); margin: 0 -16px; padding: 16px 16px; border-radius: var(--radius); }
+  .inquiry-urgency { width: 6px; min-width: 6px; height: 100%; align-self: stretch; border-radius: 3px; margin-top: 4px; min-height: 40px; }
+  .inquiry-case { flex: 1; min-width: 0; }
+  .inquiry-name { font-size: 14.5px; font-weight: 500; color: var(--text); margin-bottom: 4px; }
+  .inquiry-meta { font-size: 12.5px; color: var(--text-3); display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 7px; }
+  .inquiry-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+  .inquiry-time { font-size: 12px; color: var(--text-3); white-space: nowrap; text-align: right; }
+  .inquiry-actions { display: flex; flex-direction: column; gap: 6px; }
+  .detail-panel { background: var(--primary-pale); border: 1px solid var(--primary-light); border-radius: var(--radius-lg); padding: 18px 22px; margin-top: 10px; display: none; }
+  .detail-panel.open { display: block; }
+  .detail-row { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 10px; }
+  .detail-item { flex: 1; min-width: 130px; }
+  .detail-item-label { font-size: 12px; color: var(--text-3); margin-bottom: 3px; }
+  .detail-item-val { font-size: 14px; color: var(--text); }
+  .filter-bar { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; align-items: center; }
+  .filter-chip { padding: 6px 14px; border-radius: 20px; border: 1px solid var(--border); background: var(--surface); font-size: 13px; color: var(--text-2); cursor: pointer; transition: all 0.18s; }
+  .filter-chip:hover, .filter-chip.active { border-color: var(--primary); background: var(--primary-pale); color: var(--primary); }
+
+  /* ── PAGE 3: 報價工具 ── */
+  .quote-header-bar { background: linear-gradient(135deg, var(--primary-dark), var(--primary)); border-radius: var(--radius-lg); padding: 20px 24px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 22px; color: white; }
+  .quote-case-name { font-family: 'Noto Serif TC', serif; font-size: 18px; font-weight: 300; }
+  .quote-case-meta { font-size: 13px; color: rgba(255,255,255,0.65); margin-top: 3px; }
+  .quote-total-num { font-family: 'Noto Serif TC', serif; font-size: 32px; font-weight: 300; }
+  .quote-total-label { font-size: 12px; color: rgba(255,255,255,0.55); text-align: right; margin-bottom: 4px; }
+  .quote-table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+  .quote-table th { padding: 10px 14px; text-align: left; border-bottom: 2px solid var(--border); color: var(--text-3); font-weight: 500; font-size: 12px; background: var(--surface-2); }
+  .quote-table td { padding: 12px 14px; border-bottom: 1px solid var(--border-light); vertical-align: middle; }
+  .quote-table tr:last-child td { border-bottom: none; }
+  .quote-table tr:hover td { background: var(--surface-2); }
+  .q-type-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-right: 4px; }
+  .q-item-name { color: var(--text); font-size: 14px; }
+  .q-item-note { font-size: 12px; color: var(--text-3); margin-top: 2px; }
+  .alt-badge { display: inline-block; padding: 2px 8px; border-radius: 20px; font-size: 11px; background: #E8F4FB; color: #2C6E96; margin-left: 6px; }
+  .addon-badge { display: inline-block; padding: 2px 8px; border-radius: 20px; font-size: 11px; background: #EEF5E8; color: #3A7040; margin-left: 6px; }
+  .quote-toggle { width: 36px; height: 20px; background: var(--border); border-radius: 20px; cursor: pointer; position: relative; transition: background 0.2s; border: none; outline: none; }
+  .quote-toggle.on { background: var(--primary); }
+  .quote-toggle::after { content: ''; position: absolute; left: 3px; top: 3px; width: 14px; height: 14px; border-radius: 50%; background: white; transition: left 0.2s; }
+  .quote-toggle.on::after { left: 19px; }
+  .quote-subtotal-row td { font-weight: 500; color: var(--text); border-top: 2px solid var(--border); }
+  .send-quote-bar { background: var(--surface); border-top: 1px solid var(--border); padding: 14px 36px; position: sticky; bottom: 0; display: flex; align-items: center; justify-content: space-between; z-index: 5; }
+  .send-quote-summary { font-size: 13.5px; color: var(--text-2); }
+  .send-quote-price { font-size: 22px; font-weight: 500; color: var(--primary); }
+  .template-chips { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+  .template-chip { padding: 6px 14px; border-radius: 20px; border: 1px solid var(--border); background: var(--surface); font-size: 13px; color: var(--text-2); cursor: pointer; transition: all 0.18s; }
+  .template-chip.active, .template-chip:hover { border-color: var(--primary); background: var(--primary-pale); color: var(--primary); }
+
+  /* ── PAGE 4: 排程管理 ── */
+  .schedule-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; }
+  .week-nav { display: flex; align-items: center; gap: 12px; }
+  .week-nav-btn { width: 30px; height: 30px; border-radius: 50%; border: 1px solid var(--border); background: var(--surface); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.18s; font-size: 14px; color: var(--text-2); }
+  .week-nav-btn:hover { border-color: var(--primary-light); color: var(--primary); }
+  .week-label { font-family: 'Noto Serif TC', serif; font-size: 16px; color: var(--text); }
+  .calendar-grid { background: var(--surface); border: 1px solid var(--border-light); border-radius: var(--radius-lg); overflow: hidden; margin-bottom: 20px; }
+  .cal-header { display: grid; grid-template-columns: 60px repeat(7, 1fr); border-bottom: 2px solid var(--border); }
+  .cal-header-cell { padding: 10px 8px; text-align: center; font-size: 12.5px; color: var(--text-3); font-weight: 500; }
+  .cal-header-cell.today { color: var(--primary); font-weight: 600; }
+  .cal-body { }
+  .cal-row { display: grid; grid-template-columns: 60px repeat(7, 1fr); border-bottom: 1px solid var(--border-light); }
+  .cal-row:last-child { border-bottom: none; }
+  .cal-time { padding: 8px 10px; font-size: 12px; color: var(--text-3); text-align: right; border-right: 1px solid var(--border-light); display: flex; align-items: flex-start; padding-top: 10px; }
+  .cal-cell { padding: 5px 6px; border-right: 1px solid var(--border-light); min-height: 48px; cursor: pointer; transition: background 0.15s; }
+  .cal-cell:last-child { border-right: none; }
+  .cal-cell:hover { background: var(--surface-2); }
+  .cal-event { border-radius: 6px; padding: 4px 7px; font-size: 11.5px; margin-bottom: 3px; line-height: 1.35; }
+  .ev-ceremony { background: var(--primary-pale); color: var(--primary-dark); border-left: 3px solid var(--primary); }
+  .ev-cremation { background: #FEF4E4; color: #7A5C0A; border-left: 3px solid var(--warning); }
+  .ev-pickup { background: #E3F4EC; color: #1E5C42; border-left: 3px solid var(--success); }
+  .ev-consult { background: var(--border-light); color: var(--text-2); border-left: 3px solid var(--text-3); }
+  .ev-blocked { background: #FEE8E5; color: #9B2C2C; border-left: 3px solid var(--danger); }
+  .resource-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  .resource-card { background: var(--surface); border: 1px solid var(--border-light); border-radius: var(--radius); padding: 14px 16px; }
+  .resource-type { font-size: 11.5px; color: var(--text-3); margin-bottom: 4px; letter-spacing: 0.05em; text-transform: uppercase; }
+  .resource-name { font-size: 14.5px; color: var(--text); margin-bottom: 6px; }
+  .resource-status { display: flex; align-items: center; gap: 6px; font-size: 12.5px; }
+  .status-dot { width: 7px; height: 7px; border-radius: 50%; }
+  .dot-free { background: var(--success); }
+  .dot-busy { background: var(--warning); }
+  .dot-unavail { background: var(--danger); }
+  .todo-item { display: flex; align-items: flex-start; gap: 10px; padding: 10px 0; border-bottom: 1px solid var(--border-light); }
+  .todo-item:last-child { border-bottom: none; }
+  .todo-check { width: 18px; height: 18px; border-radius: 5px; border: 1.5px solid var(--border); display: flex; align-items: center; justify-content: center; flex-shrink: 0; cursor: pointer; margin-top: 2px; transition: all 0.18s; }
+  .todo-check.done { background: var(--primary); border-color: var(--primary); }
+  .todo-text { flex: 1; font-size: 14px; color: var(--text-2); line-height: 1.5; }
+  .todo-text.done { text-decoration: line-through; color: var(--text-3); }
+  .todo-due { font-size: 12px; color: var(--text-3); white-space: nowrap; }
+  .todo-due.urgent { color: var(--danger); }
+
+  /* ── PAGE 5: 成效分析 ── */
+  .chart-bar-wrap { display: flex; flex-direction: column; gap: 8px; }
+  .chart-bar-row { display: flex; align-items: center; gap: 10px; font-size: 13px; }
+  .chart-bar-label { width: 90px; text-align: right; color: var(--text-3); font-size: 12.5px; white-space: nowrap; }
+  .chart-bar-track { flex: 1; background: var(--border-light); border-radius: 20px; height: 10px; overflow: hidden; }
+  .chart-bar-fill { height: 100%; border-radius: 20px; background: var(--primary); transition: width 0.5s; }
+  .chart-bar-val { min-width: 40px; font-size: 13px; color: var(--text-2); font-weight: 500; }
+  .funnel-wrap { display: flex; flex-direction: column; gap: 6px; margin-top: 4px; }
+  .funnel-step { border-radius: var(--radius); padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; }
+  .funnel-label { font-size: 14px; color: var(--text); }
+  .funnel-num { font-size: 18px; font-weight: 500; color: var(--primary); }
+  .funnel-pct { font-size: 12px; color: var(--text-3); }
+  .dim-score-row { display: flex; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 1px solid var(--border-light); }
+  .dim-score-row:last-child { border-bottom: none; }
+  .dim-score-label { flex: 1; font-size: 13.5px; color: var(--text-2); }
+  .dim-score-bar-track { width: 120px; background: var(--border-light); border-radius: 20px; height: 6px; overflow: hidden; }
+  .dim-score-bar-fill { height: 100%; border-radius: 20px; background: var(--primary); }
+  .dim-score-num { font-size: 14px; font-weight: 500; color: var(--primary); min-width: 28px; text-align: right; }
+  .competitor-row { display: flex; align-items: center; gap: 12px; padding: 11px 0; border-bottom: 1px solid var(--border-light); font-size: 13.5px; }
+  .competitor-row:last-child { border-bottom: none; }
+  .competitor-name { flex: 1; color: var(--text); }
+  .competitor-count { color: var(--text-3); min-width: 40px; text-align: right; }
+  .mini-trend { display: flex; align-items: flex-end; gap: 3px; height: 28px; }
+  .mini-bar { background: var(--primary-light); border-radius: 2px; width: 10px; transition: background 0.15s; }
+  .trend-label { font-size: 12px; color: var(--text-3); margin-top: 6px; display: flex; justify-content: space-between; }
+</style>
+</head>
+<body>
+<div class="shell">
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-platform">殯殯有禮 業者後台</div>
+    <div class="logo-name">永安禮儀</div>
+    <span class="logo-tag">已驗證業者</span>
+  </div>
+  <div class="sidebar-vendor">
+    <div class="sidebar-vendor-name">陳大年 禮儀師</div>
+    <div class="sidebar-vendor-sub">台北市 · 已登入</div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-item active" onclick="showPage('p1', this)">
+      <svg class="nav-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.4">
+        <rect x="3" y="3" width="14" height="14" rx="2"/><path d="M7 7h6M7 10h6M7 13h4"/>
+      </svg>
+      店家頁管理
+    </div>
+    <div class="nav-item" onclick="showPage('p2', this)">
+      <svg class="nav-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.4">
+        <path d="M2 6h16M2 10h16M2 14h16M5 3v14M15 3v14" stroke-width="1.2"/>
+      </svg>
+      名單與詢價中心
+      <span class="nav-badge">4</span>
+    </div>
+    <div class="nav-item" onclick="showPage('p3', this)">
+      <svg class="nav-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.4">
+        <path d="M4 14l4-4 3 3 5-6"/><rect x="2" y="2" width="16" height="16" rx="2"/>
+      </svg>
+      報價與回覆工具
+    </div>
+    <div class="nav-item" onclick="showPage('p4', this)">
+      <svg class="nav-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.4">
+        <rect x="3" y="4" width="14" height="14" rx="2"/><path d="M7 2v4M13 2v4M3 10h14"/>
+      </svg>
+      排程與執行管理
+    </div>
+    <div class="nav-item" onclick="showPage('p5', this)">
+      <svg class="nav-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.4">
+        <circle cx="10" cy="10" r="7"/><path d="M10 6v4l3 2"/>
+      </svg>
+      成效分析
+    </div>
+  </nav>
+  <div class="sidebar-footer">版本 1.0 · 殯殯有禮平台</div>
+</aside>
+
+<!-- MAIN -->
+<div class="main" id="mainArea">
+
+<!-- ══════════════════════════════════════
+     PAGE 1: 店家頁管理
+══════════════════════════════════════ -->
+<div id="p1" class="page active">
+  <div class="topbar">
+    <div>
+      <div class="topbar-title">店家頁管理</div>
+      <div class="topbar-sub">管理您在平台上的公開頁面，完整度影響搜尋排序</div>
+    </div>
+    <div class="topbar-actions">
+      <button class="btn btn-sm" onclick="previewPage()">預覽頁面</button>
+      <button class="btn btn-primary btn-sm" onclick="savePage()">儲存變更</button>
+    </div>
+  </div>
+  <div style="padding:32px 36px;">
+
+    <!-- Completeness bar -->
+    <div class="profile-complete">
+      <div style="flex:1;">
+        <div style="font-size:12.5px;color:var(--primary-dark);margin-bottom:7px;">店家頁完整度，資料越完整排序越前面</div>
+        <div class="profile-complete-bar-outer">
+          <div class="profile-complete-bar-inner" id="profileBar" style="width:72%;"></div>
+        </div>
+        <div style="font-size:12px;color:var(--primary);margin-top:5px;">還差「契約範本上傳」與「塔位選項」可達到 100%</div>
+      </div>
+      <div class="profile-complete-pct">72%</div>
+    </div>
+
+    <div class="grid-2">
+      <div>
+        <!-- 品牌介紹 -->
+        <div class="card">
+          <div class="card-title">品牌介紹</div>
+          <div class="card-sub">顯示於店家頁頂部，建議 80–150 字</div>
+          <div class="field">
+            <div class="label">品牌名稱</div>
+            <input class="input" style="width:100%;" value="永安禮儀有限公司">
+          </div>
+          <div class="field" style="margin-top:12px;">
+            <div class="label">服務簡介</div>
+            <textarea class="textarea" style="width:100%;" rows="4">永安禮儀自 2005 年成立，深耕台北、新北、基隆三地，秉持「尊重、陪伴、透明」三大原則，協助超過 3,000 個家庭走過最困難的時刻。全程由專屬禮儀師負責，不外包，不隱藏費用。</textarea>
+          </div>
+          <div class="field" style="margin-top:12px;">
+            <div class="label">聯絡電話（24H）</div>
+            <input class="input" style="width:100%;" value="02-2345-6789">
+          </div>
+        </div>
+
+        <!-- 服務區域 -->
+        <div class="card">
+          <div class="card-title">服務區域</div>
+          <div class="card-sub">可複選，影響比較頁篩選結果</div>
+          <div class="service-tag-picker" id="regionTags">
+            <div class="stag on" onclick="this.classList.toggle('on')">台北市</div>
+            <div class="stag on" onclick="this.classList.toggle('on')">新北市</div>
+            <div class="stag on" onclick="this.classList.toggle('on')">基隆市</div>
+            <div class="stag" onclick="this.classList.toggle('on')">桃園市</div>
+            <div class="stag" onclick="this.classList.toggle('on')">宜蘭縣</div>
+            <div class="stag" onclick="this.classList.toggle('on')">全台</div>
+          </div>
+        </div>
+
+        <!-- 宗教與儀式專長 -->
+        <div class="card">
+          <div class="card-title">宗教與儀式專長</div>
+          <div class="card-sub">影響比較頁「宗教適配」篩選</div>
+          <div class="service-tag-picker">
+            <div class="stag on" onclick="this.classList.toggle('on')">佛教</div>
+            <div class="stag on" onclick="this.classList.toggle('on')">道教</div>
+            <div class="stag on" onclick="this.classList.toggle('on')">基督教</div>
+            <div class="stag" onclick="this.classList.toggle('on')">天主教</div>
+            <div class="stag on" onclick="this.classList.toggle('on')">無宗教 / 人文</div>
+            <div class="stag" onclick="this.classList.toggle('on')">一貫道</div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <!-- 價目表 -->
+        <div class="card">
+          <div class="card-title">標準價目表</div>
+          <div class="card-sub">此價格公開顯示於比較頁，請如實填寫</div>
+          <table class="price-table" id="priceTableEl">
+            <thead>
+              <tr>
+                <th>項目</th>
+                <th>最低價（NT$）</th>
+                <th>說明</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="priceTableBody"></tbody>
+          </table>
+          <div style="margin-top:12px;">
+            <button class="btn btn-sm" onclick="addPriceRow()">＋ 新增項目</button>
+          </div>
+        </div>
+
+        <!-- 方案選項 -->
+        <div class="card">
+          <div class="card-title">方案選項</div>
+          <div class="card-sub">提供塔位、火化、告別式可選形式</div>
+          <div style="display:flex;flex-direction:column;gap:10px;" id="packageOptions">
+            <div style="padding:12px 14px;background:var(--surface-2);border:1px solid var(--border-light);border-radius:8px;display:flex;align-items:center;justify-content:space-between;">
+              <div><div style="font-size:14px;color:var(--text);margin-bottom:2px;">火化方案 A — 基本火化</div><div style="font-size:12.5px;color:var(--text-3);">含公立火化爐 · 無告別式</div></div>
+              <div style="display:flex;gap:8px;"><span class="tag tag-blue">NT$ 25,000</span><button class="btn btn-sm btn-danger" onclick="this.closest('div[style]').remove()">移除</button></div>
+            </div>
+            <div style="padding:12px 14px;background:var(--surface-2);border:1px solid var(--border-light);border-radius:8px;display:flex;align-items:center;justify-content:space-between;">
+              <div><div style="font-size:14px;color:var(--text);margin-bottom:2px;">告別式套組 — 標準型</div><div style="font-size:12.5px;color:var(--text-3);">自有場地 3 小時 · 佛教儀式 · 花藝</div></div>
+              <div style="display:flex;gap:8px;"><span class="tag tag-blue">NT$ 68,000</span><button class="btn btn-sm btn-danger" onclick="this.closest('div[style]').remove()">移除</button></div>
+            </div>
+            <div style="padding:12px 14px;background:var(--surface-2);border:1px solid var(--border-light);border-radius:8px;display:flex;align-items:center;justify-content:space-between;">
+              <div><div style="font-size:14px;color:var(--text);margin-bottom:2px;">靈骨塔位媒合</div><div style="font-size:12.5px;color:var(--text-3);">協助選擇塔位 · 含代辦費</div></div>
+              <div style="display:flex;gap:8px;"><span class="tag tag-blue">NT$ 5,000</span><button class="btn btn-sm btn-danger" onclick="this.closest('div[style]').remove()">移除</button></div>
+            </div>
+          </div>
+          <button class="btn btn-sm" style="margin-top:12px;" onclick="addPackage()">＋ 新增方案</button>
+        </div>
+
+        <!-- 契約範本 -->
+        <div class="card">
+          <div class="card-title">契約範本</div>
+          <div class="card-sub">上傳後顯示驗證標章，提升家屬信任</div>
+          <div class="upload-zone" onclick="alert('功能示範：選擇 PDF 上傳')">
+            <div class="upload-zone-icon">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="var(--primary)" stroke-width="1.5"><path d="M10 4v8M7 9l3-5 3 5"/><path d="M4 14v2a1 1 0 001 1h10a1 1 0 001-1v-2"/></svg>
+            </div>
+            <div class="upload-zone-label">點擊上傳契約範本 PDF</div>
+            <div class="upload-zone-sub">最大 10MB，平台審核後顯示「契約已審閱」標章</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 常見問答 -->
+    <div class="card">
+      <div class="card-title">常見問答</div>
+      <div class="card-sub">顯示於店家頁底部，減少重複諮詢</div>
+      <div id="faqList">
+        <div class="faq-item">
+          <div class="faq-q">
+            <span>接體服務最快多久可以到？</span>
+            <button class="btn btn-sm btn-danger" onclick="this.closest('.faq-item').remove()">刪除</button>
+          </div>
+          <div class="faq-a">台北市區一般 1–2 小時內到達，新北市約 2–3 小時，偏遠地區視情況調整，請電話確認。</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q">
+            <span>報價單是否包含所有費用？</span>
+            <button class="btn btn-sm btn-danger" onclick="this.closest('.faq-item').remove()">刪除</button>
+          </div>
+          <div class="faq-a">我們提供逐項報價，除非家屬主動要求加購，否則不會有報價單外的額外費用。任何變動都會書面確認。</div>
+        </div>
+      </div>
+      <button class="btn btn-sm" style="margin-top:12px;" onclick="addFAQ()">＋ 新增問答</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     PAGE 2: 名單與詢價中心
+══════════════════════════════════════ -->
+<div id="p2" class="page">
+  <div class="topbar">
+    <div>
+      <div class="topbar-title">名單與詢價中心</div>
+      <div class="topbar-sub">平台導入的諮詢單，依緊急度與狀態排序</div>
+    </div>
+    <div class="topbar-actions">
+      <button class="btn btn-sm" onclick="exportInquiries()">匯出名單</button>
+    </div>
+  </div>
+  <div style="padding:32px 36px;">
+    <div class="filter-bar">
+      <div class="filter-chip active" onclick="filterInquiry(this,'all')">全部</div>
+      <div class="filter-chip" onclick="filterInquiry(this,'urgent')">緊急</div>
+      <div class="filter-chip" onclick="filterInquiry(this,'pending')">待回覆</div>
+      <div class="filter-chip" onclick="filterInquiry(this,'quoted')">已報價</div>
+      <div class="filter-chip" onclick="filterInquiry(this,'closed')">已結案</div>
+      <select class="select" style="font-size:13px;padding:6px 28px 6px 12px;margin-left:auto;">
+        <option>依時間排序</option>
+        <option>依緊急度排序</option>
+        <option>依預算排序</option>
+      </select>
+    </div>
+    <div class="card" style="padding:18px 22px;">
+      <div id="inquiryList"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     PAGE 3: 報價與回覆工具
+══════════════════════════════════════ -->
+<div id="p3" class="page">
+  <div class="topbar">
+    <div>
+      <div class="topbar-title">報價與回覆工具</div>
+      <div class="topbar-sub">在標準模板上調整，標示可替代項目後回傳正式方案</div>
+    </div>
+    <div class="topbar-actions">
+      <button class="btn btn-sm" onclick="previewQuote()">預覽報價單</button>
+      <button class="btn btn-primary btn-sm" onclick="sendQuote()">送出報價</button>
+    </div>
+  </div>
+  <div style="padding:32px 36px 80px;">
+    <div class="quote-header-bar">
+      <div>
+        <div class="quote-case-name">王明德 先生 · 詢價單 #INQ-0045</div>
+        <div class="quote-case-meta">台北市 · 預算 NT$ 80,000–120,000 · 佛教儀式 · 接體後 72 小時內</div>
+      </div>
+      <div style="text-align:right;">
+        <div class="quote-total-label">目前報價總額</div>
+        <div class="quote-total-num" id="quoteTotalDisplay">NT$ 89,000</div>
+      </div>
+    </div>
+    <div class="template-chips">
+      <div class="template-chip active" onclick="loadTemplate(this,'standard')">標準方案模板</div>
+      <div class="template-chip" onclick="loadTemplate(this,'simple')">簡樸方案模板</div>
+      <div class="template-chip" onclick="loadTemplate(this,'full')">完整方案模板</div>
+      <div class="template-chip" onclick="loadTemplate(this,'blank')">空白自訂</div>
+    </div>
+    <div class="card" style="padding:0;overflow:hidden;">
+      <table class="quote-table" id="quoteTable">
+        <thead>
+          <tr>
+            <th style="width:32px;">包含</th>
+            <th>項目</th>
+            <th style="width:100px;">單價（NT$）</th>
+            <th style="width:140px;">替代／加購說明</th>
+            <th style="width:80px;">小計</th>
+          </tr>
+        </thead>
+        <tbody id="quoteTableBody"></tbody>
+      </table>
+    </div>
+    <div style="margin-top:16px;display:flex;gap:10px;">
+      <button class="btn btn-sm" onclick="addQuoteRow()">＋ 新增項目</button>
+      <button class="btn btn-sm" onclick="addQuoteSection()">＋ 新增分類</button>
+    </div>
+    <div class="card" style="margin-top:18px;">
+      <div class="card-title">備注與說明</div>
+      <textarea class="textarea" style="width:100%;margin-top:8px;" rows="3" placeholder="給家屬的補充說明，例如：接體時間彈性說明、特殊需求確認方式…"></textarea>
+      <div style="margin-top:12px;display:flex;gap:12px;">
+        <div class="field" style="flex:1;">
+          <div class="label">報價有效期限</div>
+          <input class="input" style="width:100%;" type="date" value="2024-05-19">
+        </div>
+        <div class="field" style="flex:1;">
+          <div class="label">預計回覆時間</div>
+          <select class="select" style="width:100%;">
+            <option>立即可回覆</option>
+            <option>2 小時內</option>
+            <option>4 小時內</option>
+            <option>當天內</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="send-quote-bar">
+    <div>
+      <div class="send-quote-summary" id="quoteSummaryText">共 <strong>8</strong> 個項目，其中 2 項可替代</div>
+      <div style="font-size:12px;color:var(--text-3);margin-top:1px;">家屬預算 NT$ 80,000–120,000，目前方案在預算範圍內</div>
+    </div>
+    <div style="display:flex;gap:10px;align-items:center;">
+      <div class="send-quote-price" id="quoteTotalBar">NT$ 89,000</div>
+      <button class="btn btn-primary" onclick="sendQuote()">送出報價給家屬</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     PAGE 4: 排程與執行管理
+══════════════════════════════════════ -->
+<div id="p4" class="page">
+  <div class="topbar">
+    <div>
+      <div class="topbar-title">排程與執行管理</div>
+      <div class="topbar-sub">管理禮儀師、車輛、禮廳與火化時段</div>
+    </div>
+    <div class="topbar-actions">
+      <button class="btn btn-sm" onclick="addScheduleEvent()">＋ 新增排程</button>
+    </div>
+  </div>
+  <div style="padding:32px 36px;">
+
+    <!-- Week calendar -->
+    <div class="schedule-header">
+      <div class="week-nav">
+        <div class="week-nav-btn" onclick="navWeek(-1)">‹</div>
+        <div class="week-label" id="weekLabel">2024 年 5 月 第 2 週</div>
+        <div class="week-nav-btn" onclick="navWeek(1)">›</div>
+      </div>
+      <div style="display:flex;gap:8px;">
+        <span style="display:flex;align-items:center;gap:5px;font-size:12.5px;color:var(--text-3);"><span style="width:10px;height:10px;border-radius:2px;background:var(--primary-pale);border-left:3px solid var(--primary);"></span>告別式</span>
+        <span style="display:flex;align-items:center;gap:5px;font-size:12.5px;color:var(--text-3);"><span style="width:10px;height:10px;border-radius:2px;background:#FEF4E4;border-left:3px solid var(--warning);"></span>火化</span>
+        <span style="display:flex;align-items:center;gap:5px;font-size:12.5px;color:var(--text-3);"><span style="width:10px;height:10px;border-radius:2px;background:#E3F4EC;border-left:3px solid var(--success);"></span>接體</span>
+        <span style="display:flex;align-items:center;gap:5px;font-size:12.5px;color:var(--text-3);"><span style="width:10px;height:10px;border-radius:2px;background:var(--border-light);border-left:3px solid var(--text-3);"></span>諮詢</span>
+      </div>
+    </div>
+    <div class="calendar-grid">
+      <div class="cal-header" id="calHeader"></div>
+      <div class="cal-body" id="calBody"></div>
+    </div>
+
+    <div class="grid-2">
+      <div>
+        <div class="card">
+          <div class="card-title">資源狀態</div>
+          <div class="card-sub">今日人力、車輛與禮廳概況</div>
+          <div class="resource-grid" id="resourceGrid"></div>
+        </div>
+      </div>
+      <div>
+        <div class="card">
+          <div class="card-title">本週待辦清單</div>
+          <div class="card-sub">點擊核取框標記完成</div>
+          <div id="todoList"></div>
+          <button class="btn btn-sm" style="margin-top:12px;" onclick="addTodo()">＋ 新增待辦</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     PAGE 5: 成效分析
+══════════════════════════════════════ -->
+<div id="p5" class="page">
+  <div class="topbar">
+    <div>
+      <div class="topbar-title">成效分析</div>
+      <div class="topbar-sub">曝光到成交的完整漏斗，加上評分與競品比較</div>
+    </div>
+    <div class="topbar-actions">
+      <select class="select" style="font-size:13px;padding:6px 28px 6px 12px;" onchange="updateAnalytics(this.value)">
+        <option value="30">最近 30 天</option>
+        <option value="90">最近 90 天</option>
+        <option value="180">最近 180 天</option>
+      </select>
+    </div>
+  </div>
+  <div style="padding:32px 36px;">
+    <div class="grid-4" id="analyticsStats" style="margin-bottom:22px;"></div>
+    <div class="grid-2">
+      <div>
+        <div class="card">
+          <div class="card-title">轉換漏斗</div>
+          <div class="card-sub">從曝光到成交的每一步</div>
+          <div class="funnel-wrap" id="funnelWrap"></div>
+        </div>
+        <div class="card">
+          <div class="card-title">每週詢價趨勢</div>
+          <div class="card-sub">過去 8 週，每週新增詢價數</div>
+          <div style="display:flex;align-items:flex-end;gap:8px;height:80px;margin-top:8px;" id="trendBars"></div>
+          <div id="trendLabels" class="trend-label" style="margin-top:6px;"></div>
+        </div>
+      </div>
+      <div>
+        <div class="card">
+          <div class="card-title">六維度評分分析</div>
+          <div class="card-sub">與平台平均分比較</div>
+          <div id="dimScores"></div>
+        </div>
+        <div class="card">
+          <div class="card-title">常被比較的競品</div>
+          <div class="card-sub">使用者同時比較您與哪些業者</div>
+          <div id="competitorList"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- .main -->
+</div><!-- .shell -->
+
+<script>
+// ── Navigation ──────────────────────────────
+function showPage(id, navEl) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  if (navEl) navEl.classList.add('active');
+  document.getElementById('mainArea').scrollTop = 0;
+}
+
+// ── PAGE 1: Store Management ─────────────────
+const priceItems = [
+  {name:'接體服務', price:12000, note:'含遺體接送'},
+  {name:'冰存（每日）', price:2500, note:'最少 3 日計費'},
+  {name:'火化', price:25000, note:'含公立火化爐費用'},
+  {name:'告別式場地（3H）', price:18000, note:'自有場地'},
+  {name:'法會儀式', price:18000, note:'佛 / 道 / 基督'},
+  {name:'文件代辦', price:6000, note:'戶政、健保、遺產'},
+];
+function renderPriceTable() {
+  const tbody = document.getElementById('priceTableBody');
+  tbody.innerHTML = priceItems.map((item, i) => `
+    <tr>
+      <td style="color:var(--text);">${item.name}</td>
+      <td><input class="price-input" value="${item.price.toLocaleString()}" onchange="priceItems[${i}].price=parseInt(this.value.replace(/,/g,''))||0"></td>
+      <td><input class="input" style="width:100%;font-size:13px;padding:5px 9px;" value="${item.note}"></td>
+      <td><button class="btn btn-sm btn-danger" onclick="priceItems.splice(${i},1);renderPriceTable()">移除</button></td>
+    </tr>`).join('');
+}
+renderPriceTable();
+
+function addPriceRow() {
+  priceItems.push({name:'新項目', price:0, note:''});
+  renderPriceTable();
+}
+function addPackage() {
+  const list = document.getElementById('packageOptions');
+  const div = document.createElement('div');
+  div.style.cssText = 'padding:12px 14px;background:var(--surface-2);border:1px solid var(--border-light);border-radius:8px;display:flex;align-items:center;justify-content:space-between;';
+  div.innerHTML = `<div><input class="input" style="font-size:14px;margin-bottom:4px;width:100%;" placeholder="方案名稱"><input class="input" style="font-size:12.5px;width:100%;" placeholder="說明"></div><div style="display:flex;gap:8px;margin-left:12px;"><input class="input" style="width:90px;font-size:13px;" placeholder="NT$"><button class="btn btn-sm btn-danger" onclick="this.closest('div[style]').remove()">移除</button></div>`;
+  list.appendChild(div);
+}
+function addFAQ() {
+  const list = document.getElementById('faqList');
+  const div = document.createElement('div');
+  div.className = 'faq-item';
+  div.innerHTML = `<div class="faq-q"><input class="input" style="flex:1;font-size:14px;" placeholder="常見問題…"><button class="btn btn-sm btn-danger" onclick="this.closest('.faq-item').remove()">刪除</button></div><textarea class="textarea" style="width:100%;margin-top:8px;" rows="2" placeholder="回答內容…"></textarea>`;
+  list.appendChild(div);
+}
+function previewPage() { alert('預覽模式：開啟公開店家頁（示範）'); }
+function savePage() {
+  const btn = event.target;
+  btn.textContent = '儲存中…'; btn.disabled = true;
+  setTimeout(() => { btn.textContent = '已儲存 ✓'; setTimeout(() => { btn.textContent = '儲存變更'; btn.disabled = false; }, 1500); }, 800);
+}
+
+// ── PAGE 2: Inquiry Center ───────────────────
+const inquiries = [
+  { id:'INQ-0046', name:'陳小明 先生', situation:'家人剛過世', budget:'NT$ 60,000–90,000', region:'台北市大安區', religion:'道教', status:'urgent', note:'接體後需在 12 小時內安排冰存，家屬要求 24 小時出現在場', time:'30 分鐘前', tags:['緊急','道教','接體'] },
+  { id:'INQ-0045', name:'王明德 先生', situation:'已決定火化', budget:'NT$ 80,000–120,000', region:'台北市中山區', religion:'佛教', status:'pending', note:'需要完整告別式，家屬約 30 人，希望預算透明', time:'2 小時前', tags:['待報價','佛教','告別式'] },
+  { id:'INQ-0044', name:'李雅婷 女士', situation:'預立規劃', budget:'NT$ 40,000–60,000', region:'新北市板橋區', religion:'無宗教', status:'quoted', note:'先生有慢性病，希望提前了解各選項，不急', time:'昨天 15:30', tags:['預立','無宗教','塔位'] },
+  { id:'INQ-0043', name:'張家輝 先生', situation:'已決定火化', budget:'NT$ 70,000–100,000', region:'新北市新莊區', religion:'佛教', status:'quoted', note:'比較過三家業者，對我們的評價感興趣，需要詳細報價', time:'昨天 10:00', tags:['比較中','佛教','火化'] },
+  { id:'INQ-0042', name:'劉美玲 女士', situation:'家人剛過世', budget:'NT$ 50,000–80,000', region:'基隆市', religion:'基督教', status:'closed', note:'已完成服務，結案', time:'3 天前', tags:['結案','基督教'] },
+];
+
+const statusColorMap = { urgent:'var(--danger)', pending:'var(--warning)', quoted:'var(--primary)', closed:'var(--success)' };
+const statusLabel = { urgent:'緊急', pending:'待回覆', quoted:'已報價', closed:'已結案' };
+
+function renderInquiries(filter='all') {
+  const list = document.getElementById('inquiryList');
+  const filtered = filter === 'all' ? inquiries : inquiries.filter(i => i.status === filter);
+  if (!filtered.length) { list.innerHTML = '<div style="text-align:center;padding:32px;color:var(--text-3);">沒有符合條件的詢價單</div>'; return; }
+  list.innerHTML = filtered.map((inq, idx) => `
+    <div class="inquiry-row" onclick="toggleDetail(${idx})">
+      <div class="inquiry-urgency" style="background:${statusColorMap[inq.status]};"></div>
+      <div class="inquiry-case">
+        <div class="inquiry-name">${inq.name} <span style="font-size:12px;color:var(--text-3);font-weight:400;">${inq.id}</span></div>
+        <div class="inquiry-meta">
+          <span>${inq.situation}</span><span>${inq.region}</span><span>${inq.religion}</span><span>預算 ${inq.budget}</span>
+        </div>
+        <div class="inquiry-tags">
+          ${inq.tags.map(t=>`<span class="tag tag-blue">${t}</span>`).join('')}
+          <span class="tag" style="background:${statusColorMap[inq.status]}22;color:${statusColorMap[inq.status]};">${statusLabel[inq.status]}</span>
+        </div>
+        <div id="detail-${idx}" class="detail-panel">
+          <div class="detail-row">
+            <div class="detail-item"><div class="detail-item-label">家屬備注</div><div class="detail-item-val">${inq.note}</div></div>
+          </div>
+          <div style="display:flex;gap:8px;margin-top:12px;">
+            <button class="btn btn-primary btn-sm" onclick="event.stopPropagation();goToQuote('${inq.id}','${inq.name}')">開始報價</button>
+            <button class="btn btn-sm" onclick="event.stopPropagation();">電話聯繫</button>
+            <button class="btn btn-sm" onclick="event.stopPropagation();">標記已讀</button>
+          </div>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px;">
+        <div class="inquiry-time">${inq.time}</div>
+      </div>
+    </div>`).join('');
+}
+renderInquiries();
+
+function toggleDetail(idx) {
+  const panel = document.getElementById('detail-' + idx);
+  panel.classList.toggle('open');
+}
+function filterInquiry(el, status) {
+  document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  renderInquiries(status);
+}
+function goToQuote(id, name) {
+  showPage('p3', document.querySelectorAll('.nav-item')[2]);
+}
+function exportInquiries() { alert('匯出 CSV 功能（示範）'); }
+
+// ── PAGE 3: Quote Tool ───────────────────────
+const quoteItems = [
+  { on:true, name:'接體服務', note:'含遺體接送', price:12000, alt:'', type:'required' },
+  { on:true, name:'冰存服務（3 日）', note:'每日 NT$ 2,500', price:7500, alt:'', type:'required' },
+  { on:true, name:'火化', note:'含公立爐費用', price:25000, alt:'私立爐 +NT$ 6,000', type:'required' },
+  { on:true, name:'告別式場地（3 小時）', note:'自有場地 A3 廳', price:18000, alt:'可選 2H 場地 -NT$ 4,000', type:'optional' },
+  { on:true, name:'佛教法會儀式', note:'含師父、經懺', price:15000, alt:'', type:'optional' },
+  { on:false, name:'花藝佈置', note:'基本款', price:8000, alt:'精緻款 +NT$ 5,000', type:'addon' },
+  { on:true, name:'文件代辦', note:'戶政、健保、補助申請', price:6000, alt:'', type:'optional' },
+  { on:false, name:'遺照製作', note:'數位修圖 + 沖印', price:3500, alt:'', type:'addon' },
+];
+
+function calcQuoteTotal() {
+  return quoteItems.filter(i=>i.on).reduce((s,i)=>s+i.price,0);
+}
+function renderQuoteTable() {
+  const tbody = document.getElementById('quoteTableBody');
+  const typeColors = {required:'#D4601A', optional:'var(--primary)', addon:'var(--text-3)'};
+  tbody.innerHTML = quoteItems.map((item, i) => `
+    <tr>
+      <td style="text-align:center;">
+        <button class="quote-toggle ${item.on?'on':''}" onclick="quoteItems[${i}].on=!quoteItems[${i}].on;renderQuoteTable();updateQuoteTotal()"></button>
+      </td>
+      <td>
+        <div style="display:flex;align-items:center;gap:0;">
+          <span class="q-type-dot" style="background:${typeColors[item.type]||'var(--primary)'};"></span>
+          <div>
+            <div class="q-item-name">${item.name}</div>
+            <div class="q-item-note">${item.note}</div>
+          </div>
+        </div>
+      </td>
+      <td>
+        <input class="price-input" value="${item.price.toLocaleString()}" onchange="quoteItems[${i}].price=parseInt(this.value.replace(/,/g,''))||0;updateQuoteTotal()">
+      </td>
+      <td style="font-size:12.5px;color:var(--text-3);">
+        ${item.alt ? `<span class="alt-badge">可替代</span> ${item.alt}` : (item.type==='addon'?'<span class="addon-badge">加購項</span>':'')}
+      </td>
+      <td style="font-weight:500;color:${item.on?'var(--text)':'var(--text-3)'};">
+        ${item.on ? 'NT$ '+item.price.toLocaleString() : '—'}
+      </td>
+    </tr>`).join('') +
+    `<tr class="quote-subtotal-row">
+      <td colspan="4" style="text-align:right;font-size:14px;color:var(--text-2);">方案總計</td>
+      <td style="font-size:17px;color:var(--primary);">NT$ ${calcQuoteTotal().toLocaleString()}</td>
+    </tr>`;
+}
+function updateQuoteTotal() {
+  const t = 'NT$ ' + calcQuoteTotal().toLocaleString();
+  document.getElementById('quoteTotalDisplay').textContent = t;
+  document.getElementById('quoteTotalBar').textContent = t;
+  const on = quoteItems.filter(i=>i.on).length;
+  const alt = quoteItems.filter(i=>i.on && i.alt).length;
+  document.getElementById('quoteSummaryText').innerHTML = `共 <strong>${on}</strong> 個項目，其中 ${alt} 項可替代`;
+}
+renderQuoteTable();
+
+function addQuoteRow() {
+  quoteItems.push({on:true, name:'新增項目', note:'', price:0, alt:'', type:'optional'});
+  renderQuoteTable(); updateQuoteTotal();
+}
+function addQuoteSection() { alert('新增分類標題（示範）'); }
+function loadTemplate(el, type) {
+  document.querySelectorAll('.template-chip').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');
+  if (type==='simple') quoteItems.forEach(i=>{ if(i.type==='optional'||i.type==='addon') i.on=false; });
+  else if (type==='full') quoteItems.forEach(i=>i.on=true);
+  else if (type==='blank') quoteItems.forEach(i=>i.on=false);
+  else { quoteItems.forEach(i=>{ i.on = i.type==='required' || (i.type==='optional'); }); }
+  renderQuoteTable(); updateQuoteTotal();
+}
+function previewQuote() { alert('報價單預覽（可匯出 PDF）— 示範'); }
+function sendQuote() {
+  const btn = event.target;
+  btn.textContent = '送出中…'; btn.disabled = true;
+  setTimeout(()=>{ btn.textContent = '已送出 ✓'; setTimeout(()=>{ btn.textContent = '送出報價給家屬'; btn.disabled=false; }, 1500); }, 900);
+}
+
+// ── PAGE 4: Scheduling ───────────────────────
+const calEvents = [
+  { day:0, time:'08:00', label:'林家接體', type:'pickup' },
+  { day:0, time:'10:00', label:'法會 A3 廳', type:'ceremony' },
+  { day:1, time:'09:00', label:'陳家告別式', type:'ceremony' },
+  { day:1, time:'14:00', label:'火化 — 王先生', type:'cremation' },
+  { day:2, time:'11:00', label:'諮詢 — 電話', type:'consult' },
+  { day:3, time:'08:30', label:'張家接體', type:'pickup' },
+  { day:3, time:'13:00', label:'告別式 B1 廳', type:'ceremony' },
+  { day:4, time:'10:00', label:'火化 — 劉女士', type:'cremation' },
+  { day:4, time:'15:00', label:'諮詢 — 到府', type:'consult' },
+  { day:5, time:'09:00', label:'林家結案', type:'consult' },
+  { day:6, time:'', label:'休假', type:'blocked' },
+];
+const days = ['一','二','三','四','五','六','日'];
+const dates = [13,14,15,16,17,18,19];
+const times = ['08:00','09:00','10:00','11:00','12:00','13:00','14:00','15:00','16:00'];
+const evClassMap = { ceremony:'ev-ceremony', cremation:'ev-cremation', pickup:'ev-pickup', consult:'ev-consult', blocked:'ev-blocked' };
+
+function renderCalendar() {
+  const header = document.getElementById('calHeader');
+  header.innerHTML = '<div class="cal-header-cell"></div>' + days.map((d,i)=>`<div class="cal-header-cell ${i===2?'today':''}">週${d} <span style="font-size:15px;display:block;color:${i===2?'var(--primary)':'var(--text)'};">${dates[i]}</span></div>`).join('');
+  const body = document.getElementById('calBody');
+  body.innerHTML = times.map(t=>{
+    const cells = days.map((_,di)=>{
+      const evs = calEvents.filter(e=>e.time===t && e.day===di);
+      return `<div class="cal-cell">${evs.map(e=>`<div class="cal-event ${evClassMap[e.type]}">${e.label}</div>`).join('')}</div>`;
+    }).join('');
+    return `<div class="cal-row"><div class="cal-time">${t}</div>${cells}</div>`;
+  }).join('');
+}
+renderCalendar();
+
+const resources = [
+  {type:'禮儀師', name:'陳大年', status:'busy', statusLabel:'今日忙碌'},
+  {type:'禮儀師', name:'林志成', status:'free', statusLabel:'可安排'},
+  {type:'靈車', name:'靈車 001', status:'busy', statusLabel:'上午出勤'},
+  {type:'靈車', name:'靈車 002', status:'free', statusLabel:'可調派'},
+  {type:'禮廳', name:'A3 廳', status:'busy', statusLabel:'10:00–13:00'},
+  {type:'禮廳', name:'B1 廳', status:'free', statusLabel:'全天空閒'},
+];
+function renderResources() {
+  document.getElementById('resourceGrid').innerHTML = resources.map(r=>`
+    <div class="resource-card">
+      <div class="resource-type">${r.type}</div>
+      <div class="resource-name">${r.name}</div>
+      <div class="resource-status"><div class="status-dot dot-${r.status}"></div><span style="font-size:12.5px;color:var(--text-2);">${r.statusLabel}</span></div>
+    </div>`).join('');
+}
+renderResources();
+
+const todos = [
+  { text:'確認林家告別式花藝供應商', due:'今天', urgent:true, done:false },
+  { text:'上傳陳家結案報告與發票', due:'今天', urgent:true, done:false },
+  { text:'確認 05/16 火化時段預約', due:'明天', urgent:false, done:false },
+  { text:'更新店家頁塔位選項', due:'05/17', urgent:false, done:false },
+  { text:'回覆詢價單 INQ-0046', due:'今天', urgent:true, done:false },
+  { text:'維護靈車 001 年度保養', due:'05/20', urgent:false, done:true },
+];
+function renderTodos() {
+  document.getElementById('todoList').innerHTML = todos.map((t,i)=>`
+    <div class="todo-item">
+      <div class="todo-check ${t.done?'done':''}" onclick="todos[${i}].done=!todos[${i}].done;renderTodos()">
+        ${t.done?`<svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4l3 3 5-6" stroke="white" stroke-width="1.8" stroke-linecap="round"/></svg>`:''}
+      </div>
+      <div class="todo-text ${t.done?'done':''}">${t.text}</div>
+      <div class="todo-due ${t.urgent&&!t.done?'urgent':''}">${t.due}</div>
+    </div>`).join('');
+}
+renderTodos();
+function addTodo() {
+  const text = prompt('輸入待辦事項：');
+  if (text) { todos.push({text, due:'待設定', urgent:false, done:false}); renderTodos(); }
+}
+function navWeek(dir) {
+  const label = document.getElementById('weekLabel');
+  const parts = label.textContent.match(/第 (\d+) 週/);
+  if (parts) label.textContent = label.textContent.replace(/第 \d+ 週/, `第 ${parseInt(parts[1])+dir} 週`);
+}
+function addScheduleEvent() { alert('新增排程事件（示範）'); }
+
+// ── PAGE 5: Analytics ────────────────────────
+function renderAnalytics() {
+  document.getElementById('analyticsStats').innerHTML = [
+    {num:'1,248', label:'頁面曝光次數', delta:'+12%', up:true},
+    {num:'47', label:'新增詢價', delta:'+8%', up:true},
+    {num:'61%', label:'報價接受率', delta:'-3%', up:false},
+    {num:'4.8', label:'平均評分', delta:'+0.2', up:true},
+  ].map(s=>`
+    <div class="stat-card">
+      <div class="stat-num">${s.num}</div>
+      <div class="stat-label">${s.label}</div>
+      <div class="stat-delta ${s.up?'delta-up':'delta-down'}">${s.delta} 較上期</div>
+    </div>`).join('');
+
+  document.getElementById('funnelWrap').innerHTML = [
+    {label:'頁面曝光', num:1248, pct:'100%', bg:'var(--primary-pale)'},
+    {label:'點擊店家頁', num:312, pct:'25%', bg:'#D6E6F2'},
+    {label:'送出詢價', num:47, pct:'15%', bg:'#C4D9EC'},
+    {label:'收到報價', num:38, pct:'81%', bg:'#A8C7E0'},
+    {label:'確認成交', num:23, pct:'61%', bg:' var(--primary)'},
+  ].map(f=>`
+    <div class="funnel-step" style="background:${f.bg};">
+      <span class="funnel-label" style="color:${f.label==='確認成交'?'white':'var(--text)'};">${f.label}</span>
+      <div style="text-align:right;">
+        <div class="funnel-num" style="color:${f.label==='確認成交'?'white':'var(--primary)'};">${f.num}</div>
+        <div class="funnel-pct" style="color:${f.label==='確認成交'?'rgba(255,255,255,0.7)':'var(--text-3)'};">${f.pct}</div>
+      </div>
+    </div>`).join('');
+
+  const trendData = [6, 9, 7, 11, 8, 13, 10, 47];
+  const weekLabels = ['W1','W2','W3','W4','W5','W6','W7','W8'];
+  const maxVal = Math.max(...trendData);
+  document.getElementById('trendBars').innerHTML = trendData.map((v,i)=>`
+    <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;">
+      <div style="font-size:11px;color:var(--text-3);">${v}</div>
+      <div style="width:100%;background:${i===7?'var(--primary)':'var(--primary-light)'};border-radius:4px 4px 0 0;height:${Math.round(v/maxVal*60)}px;transition:height 0.4s;"></div>
+    </div>`).join('');
+  document.getElementById('trendLabels').innerHTML = weekLabels.map(w=>`<span>${w}</span>`).join('');
+
+  document.getElementById('dimScores').innerHTML = [
+    {label:'價格透明度', mine:4.9, avg:4.0},
+    {label:'流程清楚度', mine:4.7, avg:3.8},
+    {label:'臨時加價情況', mine:4.8, avg:3.5},
+    {label:'同理心', mine:4.9, avg:4.2},
+    {label:'準時度', mine:4.6, avg:4.1},
+    {label:'售後協助', mine:4.5, avg:3.7},
+  ].map(d=>`
+    <div class="dim-score-row">
+      <div class="dim-score-label">${d.label}</div>
+      <div style="display:flex;flex-direction:column;gap:4px;">
+        <div style="display:flex;align-items:center;gap:8px;">
+          <div class="dim-score-bar-track"><div class="dim-score-bar-fill" style="width:${d.mine/5*100}%;background:var(--primary);"></div></div>
+          <div class="dim-score-num">${d.mine}</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <div class="dim-score-bar-track"><div class="dim-score-bar-fill" style="width:${d.avg/5*100}%;background:var(--border);"></div></div>
+          <div style="font-size:12px;color:var(--text-3);min-width:28px;text-align:right;">${d.avg}</div>
+        </div>
+      </div>
+    </div>`).join('') +
+    `<div style="font-size:12px;color:var(--text-3);margin-top:10px;display:flex;gap:14px;">
+      <span style="display:flex;align-items:center;gap:5px;"><span style="width:10px;height:3px;background:var(--primary);border-radius:2px;display:inline-block;"></span>您的分數</span>
+      <span style="display:flex;align-items:center;gap:5px;"><span style="width:10px;height:3px;background:var(--border);border-radius:2px;display:inline-block;"></span>平台平均</span>
+    </div>`;
+
+  document.getElementById('competitorList').innerHTML = [
+    {name:'祥和殯葬', count:28, note:'主要重疊：火化、告別式'},
+    {name:'心安禮儀社', count:19, note:'主要重疊：全套方案'},
+    {name:'台北市立殯儀館', count:12, note:'主要重疊：火化單項'},
+    {name:'綠葉環保禮儀', count:7, note:'主要重疊：環保葬'},
+  ].map(c=>`
+    <div class="competitor-row">
+      <div class="competitor-name">${c.name}</div>
+      <div style="flex:1;font-size:12.5px;color:var(--text-3);">${c.note}</div>
+      <div class="competitor-count">${c.count} 次</div>
+    </div>`).join('');
+}
+renderAnalytics();
+</script>
+</body>
+</html>
