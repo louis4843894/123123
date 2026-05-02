@@ -116,6 +116,9 @@
   }
   .topbar-burger:hover { background: var(--primary-pale); color: var(--primary); }
 
+  /* Save button responsive */
+  .btn-save-mobile .btn-icon { display: none; }
+
   /* Page switch button */
   .page-switch-btn {
     display: inline-flex; align-items: center; justify-content: center;
@@ -340,6 +343,9 @@
     .send-quote-bar { padding: 12px 16px; flex-direction: column; gap: 10px; }
     .topbar-actions .btn:not(.btn-primary) { display: none; }
     .resource-grid { grid-template-columns: 1fr 1fr; }
+    .btn-save-mobile .btn-label { display: none; }
+    .btn-save-mobile { padding: 0; width: 34px; height: 34px; display: inline-flex; align-items: center; justify-content: center; }
+    .btn-save-mobile .btn-icon { display: inline-flex; }
   }
   @media (max-width: 480px) {
     .grid-3 { grid-template-columns: 1fr; }
@@ -437,7 +443,10 @@
       </a>
       <div class="topbar-actions">
         <button class="btn btn-sm" onclick="previewPage()">預覽頁面</button>
-        <button class="btn btn-primary btn-sm" onclick="savePage()">儲存變更</button>
+        <button class="btn btn-primary btn-sm btn-save-mobile" onclick="savePage()">
+          <svg class="btn-icon" width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 13v3h12v-3M10 3v9M7 9l3 3 3-3"/></svg>
+          <span class="btn-label">儲存變更</span>
+        </button>
       </div>
     </div>
   </div>
@@ -462,12 +471,12 @@
           <div class="card-title">品牌介紹</div>
           <div class="card-sub">顯示於店家頁頂部，建議 80–150 字</div>
           <div class="field">
-            <div class="label">品牌名稱</div>
+            <div class="label">品牌���稱</div>
             <input class="input" style="width:100%;" value="永���禮儀有限公司">
           </div>
           <div class="field" style="margin-top:12px;">
             <div class="label">服務簡介</div>
-            <textarea class="textarea" style="width:100%;" rows="4">永安禮儀自 2005 年成立，深耕台北、新北、基隆三地，秉持「尊重、陪伴、透明」三大原則，協助超過 3,000 個家庭走過最困難的時��。全程由專屬禮儀師負責，不外包，不隱藏費用。</textarea>
+            <textarea class="textarea" style="width:100%;" rows="4">永安禮儀自 2005 年成立，深耕台北、新北、基隆三地，秉持「尊重、陪���、透明」三大原則，協助超過 3,000 個家庭走過最困難的時��。全程由專屬禮儀師負責，不外包，不隱藏費用。</textarea>
           </div>
           <div class="field" style="margin-top:12px;">
             <div class="label">聯絡電話（24H）</div>
@@ -842,7 +851,7 @@ function closeMobileSidebar() {
   document.getElementById('sidebarOverlay').classList.remove('visible');
 }
 
-// ── Navigation ──────────────────────────────
+// ── Navigation ──────────────────────���───────
 function showPage(id, navEl) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
@@ -1033,7 +1042,7 @@ function previewQuote() { alert('報價單預覽（可匯出 PDF）— 示範');
 function sendQuote() {
   const btn = event.target;
   btn.textContent = '送出中…'; btn.disabled = true;
-  setTimeout(()=>{ btn.textContent = '已送出 ✓'; setTimeout(()=>{ btn.textContent = '送出報價給家屬'; btn.disabled=false; }, 1500); }, 900);
+  setTimeout(()=>{ btn.textContent = '已送出 ✓'; setTimeout(()=>{ btn.textContent = '送��報價給家屬'; btn.disabled=false; }, 1500); }, 900);
 }
 
 // ── PAGE 4: Scheduling ───────────────────────
